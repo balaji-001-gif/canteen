@@ -18,7 +18,7 @@ canteen.CanteenPOS = class CanteenPOS {
     async loadItems(category = null) {
         try {
             const result = await frappe.call({
-                method: "canteen_management.canteen_management.doctype.canteen_item.canteen_item.search_items",
+                method: "canteen_management.doctype.canteen_item.canteen_item.search_items",
                 args: { search_term: "", category: category }
             });
             this.items = result.message || [];
@@ -133,7 +133,7 @@ canteen.CanteenPOS = class CanteenPOS {
     async searchItems(query) {
         try {
             const result = await frappe.call({
-                method: "canteen_management.canteen_management.doctype.canteen_item.canteen_item.search_items",
+                method: "canteen_management.doctype.canteen_item.canteen_item.search_items",
                 args: { search_term: query }
             });
             this.items = result.message || [];
