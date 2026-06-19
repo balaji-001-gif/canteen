@@ -21,10 +21,8 @@ web_include_js = []
 
 # Fixtures
 fixtures = [
-    {
-        "doctype": "Custom Field",
-        "filters": [["module", "=", "Canteen Management"]]
-    },
+    "custom_field.json",
+    "workspace.json",
     {
         "doctype": "Role",
         "filters": [["name", "in", [
@@ -34,10 +32,6 @@ fixtures = [
             "Canteen Staff",
             "Canteen User"
         ]]]
-    },
-    {
-        "doctype": "Workspace",
-        "filters": [["module", "=", "Canteen Management"]]
     }
 ]
 

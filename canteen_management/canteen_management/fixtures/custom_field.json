@@ -1,0 +1,114 @@
+[
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-canteen_wallet",
+  "dt": "Employee",
+  "fieldname": "canteen_wallet",
+  "label": "Canteen Wallet",
+  "fieldtype": "Link",
+  "options": "Canteen Employee Wallet",
+  "insert_after": "employment_type",
+  "read_only": 1,
+  "description": "Link to the employee's canteen wallet for meal payments"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-enable_canteen_wallet",
+  "dt": "Employee",
+  "fieldname": "enable_canteen_wallet",
+  "label": "Enable Canteen Wallet",
+  "fieldtype": "Check",
+  "insert_after": "canteen_wallet",
+  "default": "0",
+  "description": "Enable canteen wallet access for this employee"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-wallet_credit_limit",
+  "dt": "Employee",
+  "fieldname": "wallet_credit_limit",
+  "label": "Wallet Credit Limit",
+  "fieldtype": "Currency",
+  "insert_after": "enable_canteen_wallet",
+  "default": "0",
+  "description": "Credit limit for the employee's canteen wallet"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-dietary_preferences",
+  "dt": "Employee",
+  "fieldname": "dietary_preferences",
+  "label": "Dietary Preferences",
+  "fieldtype": "Select",
+  "options": "\nVegetarian\nNon-Vegetarian\nVegan\nJain\nNo Preference",
+  "insert_after": "wallet_credit_limit",
+  "description": "Employee's dietary preferences for canteen service"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Canteen Order-kitchen_display",
+  "dt": "Canteen Order",
+  "fieldname": "kitchen_display",
+  "label": "Show in Kitchen Display",
+  "fieldtype": "Check",
+  "insert_after": "kitchen_notes",
+  "default": "1",
+  "description": "Flag this order for the kitchen display screen"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Canteen Order-estimated_ready_time",
+  "dt": "Canteen Order",
+  "fieldname": "estimated_ready_time",
+  "label": "Estimated Ready Time",
+  "fieldtype": "Time",
+  "insert_after": "kitchen_display",
+  "read_only": 1,
+  "description": "Estimated time when the order will be ready"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Canteen Order-bill_print_count",
+  "dt": "Canteen Order",
+  "fieldname": "bill_print_count",
+  "label": "Bill Print Count",
+  "fieldtype": "Int",
+  "insert_after": "estimated_ready_time",
+  "default": "0",
+  "read_only": 1,
+  "description": "Number of times the bill has been printed"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Canteen Invoice-printed",
+  "dt": "Canteen Invoice",
+  "fieldname": "printed",
+  "label": "Printed",
+  "fieldtype": "Check",
+  "insert_after": "change_amount",
+  "default": "0",
+  "description": "Indicates if the invoice has been printed"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "User-canteen_role",
+  "dt": "User",
+  "fieldname": "canteen_role",
+  "label": "Canteen Role",
+  "fieldtype": "Select",
+  "options": "\nCanteen Admin\nCanteen Manager\nCanteen Cashier\nCanteen Staff\nCanteen User",
+  "insert_after": "role_profile_name",
+  "description": "Assigned canteen role for this user"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "User-default_canteen",
+  "dt": "User",
+  "fieldname": "default_canteen",
+  "label": "Default Canteen",
+  "fieldtype": "Link",
+  "options": "Canteen Settings",
+  "insert_after": "canteen_role",
+  "description": "Default canteen for this user"
+ }
+]
