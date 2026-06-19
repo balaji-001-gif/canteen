@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "canteen_management"
 dynamic = ["version"]
@@ -15,13 +19,6 @@ dependencies = []
 Homepage = "https://github.com/balaji-001-gif/canteen"
 Repository = "https://github.com/balaji-001-gif/canteen.git"
 "Bug Reports" = "https://github.com/balaji-001-gif/canteen/issues"
-
-[build-system]
-requires = ["flit_core >=3.4,<4"]
-build-backend = "flit_core.buildapi"
-
-[tool.flit.module]
-name = "canteen_management"
 
 [tool.bench.frappe-dependencies]
 frappe = ">=15.0.0"
