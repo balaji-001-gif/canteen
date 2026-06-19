@@ -1,0 +1,124 @@
+{
+  "actions": [],
+  "autoname": "field:item",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "item",
+    "item_name",
+    "col_break1",
+    "current_quantity",
+    "minimum_quantity",
+    "maximum_quantity",
+    "unit",
+    "section_details",
+    "last_updated",
+    "last_stock_entry",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Canteen Item",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "label": "Item Name",
+      "fetch_from": "item.item_name",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "current_quantity",
+      "fieldtype": "Float",
+      "label": "Current Quantity",
+      "default": "0",
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "minimum_quantity",
+      "fieldtype": "Float",
+      "label": "Minimum Quantity",
+      "default": "10",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "maximum_quantity",
+      "fieldtype": "Float",
+      "label": "Maximum Quantity",
+      "default": "100"
+    },
+    {
+      "fieldname": "unit",
+      "fieldtype": "Link",
+      "label": "Unit",
+      "options": "UOM"
+    },
+    {
+      "fieldname": "section_details",
+      "fieldtype": "Section Break",
+      "label": "Details"
+    },
+    {
+      "fieldname": "last_updated",
+      "fieldtype": "Datetime",
+      "label": "Last Updated",
+      "read_only": 1
+    },
+    {
+      "fieldname": "last_stock_entry",
+      "fieldtype": "Link",
+      "label": "Last Stock Entry",
+      "options": "Canteen Stock Entry",
+      "read_only": 1
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "icon": "fa fa-boxes",
+  "module": "Canteen Management",
+  "name": "Canteen Inventory",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Cashier"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Staff"
+    }
+  ],
+  "sort_field": "item_name",
+  "sort_order": "ASC",
+  "title_field": "item_name"
+}

@@ -1,0 +1,202 @@
+{
+  "actions": [],
+  "autoname": "field:item_code",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "item_code",
+    "item_name",
+    "category",
+    "col_break1",
+    "image",
+    "is_active",
+    "is_available",
+    "section_pricing",
+    "selling_price",
+    "cost_price",
+    "tax_rate",
+    "col_break2",
+    "unit_of_measure",
+    "min_stock_level",
+    "current_stock",
+    "section_details",
+    "description",
+    "allergen_info",
+    "is_vegetarian",
+    "is_vegan",
+    "preparation_time",
+    "section_barcode",
+    "barcode"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_code",
+      "fieldtype": "Data",
+      "label": "Item Code",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "label": "Item Name",
+      "reqd": 1,
+      "in_list_view": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "category",
+      "fieldtype": "Link",
+      "label": "Category",
+      "options": "Canteen Category",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "image",
+      "fieldtype": "Attach Image",
+      "label": "Item Image"
+    },
+    {
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active",
+      "default": "1",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_available",
+      "fieldtype": "Check",
+      "label": "Available Today",
+      "default": "1"
+    },
+    {
+      "fieldname": "section_pricing",
+      "fieldtype": "Section Break",
+      "label": "Pricing"
+    },
+    {
+      "fieldname": "selling_price",
+      "fieldtype": "Currency",
+      "label": "Selling Price",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "cost_price",
+      "fieldtype": "Currency",
+      "label": "Cost Price"
+    },
+    {
+      "fieldname": "tax_rate",
+      "fieldtype": "Float",
+      "label": "Tax Rate (%)",
+      "default": "5"
+    },
+    {
+      "fieldname": "col_break2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "unit_of_measure",
+      "fieldtype": "Link",
+      "label": "Unit of Measure",
+      "options": "UOM",
+      "default": "Nos"
+    },
+    {
+      "fieldname": "min_stock_level",
+      "fieldtype": "Float",
+      "label": "Minimum Stock Level",
+      "default": "10"
+    },
+    {
+      "fieldname": "current_stock",
+      "fieldtype": "Float",
+      "label": "Current Stock",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_details",
+      "fieldtype": "Section Break",
+      "label": "Item Details"
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Small Text",
+      "label": "Description"
+    },
+    {
+      "fieldname": "allergen_info",
+      "fieldtype": "Small Text",
+      "label": "Allergen Information"
+    },
+    {
+      "fieldname": "is_vegetarian",
+      "fieldtype": "Check",
+      "label": "Vegetarian",
+      "default": "1"
+    },
+    {
+      "fieldname": "is_vegan",
+      "fieldtype": "Check",
+      "label": "Vegan"
+    },
+    {
+      "fieldname": "preparation_time",
+      "fieldtype": "Int",
+      "label": "Preparation Time (minutes)",
+      "default": "5"
+    },
+    {
+      "fieldname": "section_barcode",
+      "fieldtype": "Section Break",
+      "label": "Barcode"
+    },
+    {
+      "fieldname": "barcode",
+      "fieldtype": "Data",
+      "label": "Barcode"
+    }
+  ],
+  "icon": "fa fa-utensils",
+  "module": "Canteen Management",
+  "name": "Canteen Item",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Cashier"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Staff"
+    }
+  ],
+  "search_fields": "item_name,category,barcode",
+  "sort_field": "item_name",
+  "sort_order": "ASC",
+  "title_field": "item_name"
+}

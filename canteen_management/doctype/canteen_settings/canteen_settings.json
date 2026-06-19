@@ -1,0 +1,190 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "section_general",
+    "canteen_name",
+    "company",
+    "currency",
+    "col_break1",
+    "gst_number",
+    "tax_rate",
+    "enable_wallet",
+    "section_pos",
+    "default_printer",
+    "receipt_header",
+    "receipt_footer",
+    "col_break2",
+    "enable_table_management",
+    "low_stock_threshold",
+    "auto_close_shift",
+    "section_payment",
+    "accepted_payment_modes",
+    "enable_credit_sales",
+    "max_credit_limit",
+    "section_notification",
+    "low_stock_email",
+    "daily_report_email",
+    "notify_on_large_order"
+  ],
+  "fields": [
+    {
+      "fieldname": "section_general",
+      "fieldtype": "Section Break",
+      "label": "General Settings"
+    },
+    {
+      "fieldname": "canteen_name",
+      "fieldtype": "Data",
+      "label": "Canteen Name",
+      "reqd": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company",
+      "reqd": 1
+    },
+    {
+      "fieldname": "currency",
+      "fieldtype": "Link",
+      "label": "Currency",
+      "options": "Currency",
+      "default": "INR"
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "gst_number",
+      "fieldtype": "Data",
+      "label": "GST Number"
+    },
+    {
+      "fieldname": "tax_rate",
+      "fieldtype": "Float",
+      "label": "Default Tax Rate (%)",
+      "default": "5"
+    },
+    {
+      "fieldname": "enable_wallet",
+      "fieldtype": "Check",
+      "label": "Enable Employee Wallet",
+      "default": "1"
+    },
+    {
+      "fieldname": "section_pos",
+      "fieldtype": "Section Break",
+      "label": "POS Settings"
+    },
+    {
+      "fieldname": "default_printer",
+      "fieldtype": "Data",
+      "label": "Default Printer Name"
+    },
+    {
+      "fieldname": "receipt_header",
+      "fieldtype": "Small Text",
+      "label": "Receipt Header"
+    },
+    {
+      "fieldname": "receipt_footer",
+      "fieldtype": "Small Text",
+      "label": "Receipt Footer"
+    },
+    {
+      "fieldname": "col_break2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "enable_table_management",
+      "fieldtype": "Check",
+      "label": "Enable Table Management",
+      "default": "1"
+    },
+    {
+      "fieldname": "low_stock_threshold",
+      "fieldtype": "Int",
+      "label": "Low Stock Threshold",
+      "default": "10"
+    },
+    {
+      "fieldname": "auto_close_shift",
+      "fieldtype": "Check",
+      "label": "Auto Close Shift at End of Day"
+    },
+    {
+      "fieldname": "section_payment",
+      "fieldtype": "Section Break",
+      "label": "Payment Settings"
+    },
+    {
+      "fieldname": "accepted_payment_modes",
+      "fieldtype": "Table MultiSelect",
+      "label": "Accepted Payment Modes",
+      "options": "Canteen Payment Mode"
+    },
+    {
+      "fieldname": "enable_credit_sales",
+      "fieldtype": "Check",
+      "label": "Enable Credit Sales"
+    },
+    {
+      "fieldname": "max_credit_limit",
+      "fieldtype": "Currency",
+      "label": "Maximum Credit Limit",
+      "default": "1000"
+    },
+    {
+      "fieldname": "section_notification",
+      "fieldtype": "Section Break",
+      "label": "Notification Settings"
+    },
+    {
+      "fieldname": "low_stock_email",
+      "fieldtype": "Data",
+      "label": "Low Stock Alert Email",
+      "options": "Email"
+    },
+    {
+      "fieldname": "daily_report_email",
+      "fieldtype": "Data",
+      "label": "Daily Report Email",
+      "options": "Email"
+    },
+    {
+      "fieldname": "notify_on_large_order",
+      "fieldtype": "Currency",
+      "label": "Notify on Order Above Amount"
+    }
+  ],
+  "icon": "fa fa-cog",
+  "issingle": 1,
+  "module": "Canteen Management",
+  "name": "Canteen Settings",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "print": 1,
+      "read": 1,
+      "role": "Canteen Admin",
+      "write": 1
+    },
+    {
+      "read": 1,
+      "role": "Canteen Manager"
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}

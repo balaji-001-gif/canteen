@@ -1,0 +1,1 @@
+recursive-include canteen_management *.html *.js *.css *.json *.txt *.md *.png *.jpg *.svg
