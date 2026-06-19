@@ -2,9 +2,52 @@
  "actions": [],
  "app": "canteen_management",
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Sales Trend",
+   "label": "Sales Trend (7 Days)",
+   "chart_type": "Group By",
+   "doctype": "Canteen Order",
+   "group_by_type": "Sum",
+   "aggregate_function_based_on": "total_amount",
+   "timeseries": 1,
+   "time_interval": "Daily",
+   "timespan": "Last 7 Days",
+   "type": "Line",
+   "color": "#28A745",
+   "custom_options": "{\"height\":250,\"axisOptions\":{\"xAxis\":{\"title\":\"Date\"},\"yAxis\":{\"title\":\"Sales\"}}}",
+   "filters_json": "[[\"docstatus\",\"=\",1]]"
+  },
+  {
+   "chart_name": "Orders by Type",
+   "label": "Orders by Type",
+   "chart_type": "Group By",
+   "doctype": "Canteen Order",
+   "group_by_type": "Count",
+   "based_on": "order_type",
+   "timeseries": 0,
+   "type": "Pie",
+   "color": "#007BFF",
+   "custom_options": "{}",
+   "filters_json": "[[\"docstatus\",\"=\",1]]"
+  },
+  {
+   "chart_name": "Payment Mode Breakdown",
+   "label": "Payment Mode Breakdown",
+   "chart_type": "Group By",
+   "doctype": "Canteen Order",
+   "group_by_type": "Sum",
+   "aggregate_function_based_on": "total_amount",
+   "based_on": "payment_mode",
+   "timeseries": 0,
+   "type": "Bar",
+   "color": "#6F42C1",
+   "custom_options": "{}",
+   "filters_json": "[[\"docstatus\",\"=\",1]]"
+  }
+ ],
  "color": "#28A745",
- "content": "[{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Orders\",\"col\":12}},{\"id\":\"cb-items\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Categories\",\"col\":12}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory\",\"col\":12}},{\"id\":\"cb-operations\",\"type\":\"card\",\"data\":{\"card_name\":\"Operations\",\"col\":12}},{\"id\":\"cb-finance\",\"type\":\"card\",\"data\":{\"card_name\":\"Finance\",\"col\":12}},{\"id\":\"cb-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":12}}]",
+ "content": "[{\"id\":\"cb-metrics\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Metrics\",\"col\":12}},{\"id\":\"cb-charts\",\"type\":\"card\",\"data\":{\"card_name\":\"Charts\",\"col\":12}},{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Orders\",\"col\":12}},{\"id\":\"cb-items\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Categories\",\"col\":12}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory\",\"col\":12}},{\"id\":\"cb-operations\",\"type\":\"card\",\"data\":{\"card_name\":\"Operations\",\"col\":12}},{\"id\":\"cb-finance\",\"type\":\"card\",\"data\":{\"card_name\":\"Finance\",\"col\":12}},{\"id\":\"cb-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":12}}]",
  "creation": "2024-01-01 00:00:00.000000",
  "custom_base": 0,
  "doctype": "Workspace",
@@ -17,12 +60,121 @@
  "icon": "icon-utensils",
  "idx": 0,
  "is_hidden": 0,
- "public": 1,
  "label": "Canteen Management",
  "links": [
   {
    "hidden": 0,
    "idx": 1,
+   "is_query_report": 0,
+   "label": "Key Metrics",
+   "link_count": 0,
+   "onboard": 1,
+   "title": "Key Metrics",
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "idx": 2,
+   "is_query_report": 0,
+   "label": "Today Orders",
+   "link_to": "Today Orders",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 3,
+   "is_query_report": 0,
+   "label": "Today Sales",
+   "link_to": "Today Sales",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 4,
+   "is_query_report": 0,
+   "label": "Active Shifts",
+   "link_to": "Active Shifts",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 5,
+   "is_query_report": 0,
+   "label": "Low Stock Items",
+   "link_to": "Low Stock Items",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 6,
+   "is_query_report": 0,
+   "label": "Total Menu Items",
+   "link_to": "Total Menu Items",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 7,
+   "is_query_report": 0,
+   "label": "Active Wallets",
+   "link_to": "Active Wallets",
+   "link_type": "Number Card",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 8,
+   "is_query_report": 0,
+   "label": "Charts",
+   "link_count": 0,
+   "onboard": 1,
+   "title": "Charts",
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "idx": 9,
+   "is_query_report": 0,
+   "label": "Sales Trend",
+   "link_to": "Sales Trend",
+   "link_type": "Chart",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 10,
+   "is_query_report": 0,
+   "label": "Orders by Type",
+   "link_to": "Orders by Type",
+   "link_type": "Chart",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 11,
+   "is_query_report": 0,
+   "label": "Payment Mode Breakdown",
+   "link_to": "Payment Mode Breakdown",
+   "link_type": "Chart",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "idx": 12,
    "is_query_report": 0,
    "label": "Orders",
    "link_count": 0,
@@ -32,7 +184,7 @@
   },
   {
    "hidden": 0,
-   "idx": 2,
+   "idx": 13,
    "is_query_report": 0,
    "label": "Canteen Order",
    "link_to": "Canteen Order",
@@ -42,7 +194,7 @@
   },
   {
    "hidden": 0,
-   "idx": 3,
+   "idx": 14,
    "is_query_report": 0,
    "label": "Canteen Invoice",
    "link_to": "Canteen Invoice",
@@ -52,7 +204,7 @@
   },
   {
    "hidden": 0,
-   "idx": 4,
+   "idx": 15,
    "is_query_report": 0,
    "label": "Items & Categories",
    "link_count": 0,
@@ -62,7 +214,7 @@
   },
   {
    "hidden": 0,
-   "idx": 5,
+   "idx": 16,
    "is_query_report": 0,
    "label": "Canteen Item",
    "link_to": "Canteen Item",
@@ -72,7 +224,7 @@
   },
   {
    "hidden": 0,
-   "idx": 6,
+   "idx": 17,
    "is_query_report": 0,
    "label": "Canteen Category",
    "link_to": "Canteen Category",
@@ -82,7 +234,7 @@
   },
   {
    "hidden": 0,
-   "idx": 7,
+   "idx": 18,
    "is_query_report": 0,
    "label": "Inventory",
    "link_count": 0,
@@ -92,7 +244,7 @@
   },
   {
    "hidden": 0,
-   "idx": 8,
+   "idx": 19,
    "is_query_report": 0,
    "label": "Canteen Inventory",
    "link_to": "Canteen Inventory",
@@ -102,7 +254,7 @@
   },
   {
    "hidden": 0,
-   "idx": 9,
+   "idx": 20,
    "is_query_report": 0,
    "label": "Canteen Stock Entry",
    "link_to": "Canteen Stock Entry",
@@ -112,7 +264,7 @@
   },
   {
    "hidden": 0,
-   "idx": 10,
+   "idx": 21,
    "is_query_report": 0,
    "label": "Operations",
    "link_count": 0,
@@ -122,7 +274,7 @@
   },
   {
    "hidden": 0,
-   "idx": 11,
+   "idx": 22,
    "is_query_report": 0,
    "label": "Canteen Shift",
    "link_to": "Canteen Shift",
@@ -132,7 +284,7 @@
   },
   {
    "hidden": 0,
-   "idx": 12,
+   "idx": 23,
    "is_query_report": 0,
    "label": "Canteen Table",
    "link_to": "Canteen Table",
@@ -142,7 +294,7 @@
   },
   {
    "hidden": 0,
-   "idx": 13,
+   "idx": 24,
    "is_query_report": 0,
    "label": "Finance",
    "link_count": 0,
@@ -152,7 +304,7 @@
   },
   {
    "hidden": 0,
-   "idx": 14,
+   "idx": 25,
    "is_query_report": 0,
    "label": "Canteen Employee Wallet",
    "link_to": "Canteen Employee Wallet",
@@ -162,7 +314,7 @@
   },
   {
    "hidden": 0,
-   "idx": 15,
+   "idx": 26,
    "is_query_report": 0,
    "label": "Canteen Wallet Transaction",
    "link_to": "Canteen Wallet Transaction",
@@ -172,7 +324,7 @@
   },
   {
    "hidden": 0,
-   "idx": 16,
+   "idx": 27,
    "is_query_report": 0,
    "label": "Settings",
    "link_count": 0,
@@ -182,7 +334,7 @@
   },
   {
    "hidden": 0,
-   "idx": 17,
+   "idx": 28,
    "is_query_report": 0,
    "label": "Canteen Settings",
    "link_to": "Canteen Settings",
@@ -195,7 +347,45 @@
  "modified_by": "Administrator",
  "module": "Canteen Management",
  "name": "Canteen Management",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Today Orders",
+   "document_type": "Canteen Order",
+   "function": "Count",
+   "filters_json": "[[\"order_date\",\"=\",\"Today\"],[\"docstatus\",\"=\",1]]"
+  },
+  {
+   "label": "Today Sales",
+   "document_type": "Canteen Order",
+   "function": "Sum",
+   "aggregate_function_based_on": "total_amount",
+   "filters_json": "[[\"order_date\",\"=\",\"Today\"],[\"docstatus\",\"=\",1]]"
+  },
+  {
+   "label": "Active Shifts",
+   "document_type": "Canteen Shift",
+   "function": "Count",
+   "filters_json": "[[\"status\",\"=\",\"Active\"]]"
+  },
+  {
+   "label": "Low Stock Items",
+   "document_type": "Canteen Inventory",
+   "function": "Count",
+   "filters_json": "[[\"current_quantity\",\"<=\",\"minimum_quantity\"]]"
+  },
+  {
+   "label": "Total Menu Items",
+   "document_type": "Canteen Item",
+   "function": "Count",
+   "filters_json": "[[\"is_active\",\"=\",1]]"
+  },
+  {
+   "label": "Active Wallets",
+   "document_type": "Canteen Employee Wallet",
+   "function": "Count",
+   "filters_json": "[[\"is_active\",\"=\",1]]"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "permissions": [
@@ -228,6 +418,7 @@
    "delete": 1
   }
  ],
+ "public": 1,
  "quick_lists": [],
  "restrict_to_role": "",
  "roles": [
@@ -244,34 +435,53 @@
  "sequence_id": 1,
  "shortcuts": [
   {
+   "label": "New Order",
    "type": "DocType",
    "link_to": "Canteen Order",
-   "label": "Canteen Order"
+   "doc_type": "Canteen Order",
+   "icon": "shopping-cart"
   },
   {
-   "type": "DocType",
-   "link_to": "Canteen Invoice",
-   "label": "Canteen Invoice"
-  },
-  {
-   "type": "DocType",
-   "link_to": "Canteen Item",
-   "label": "Canteen Item"
-  },
-  {
+   "label": "New Stock Entry",
    "type": "DocType",
    "link_to": "Canteen Stock Entry",
-   "label": "Canteen Stock Entry"
+   "doc_type": "Canteen Stock Entry",
+   "icon": "truck"
   },
   {
+   "label": "New Item",
+   "type": "DocType",
+   "link_to": "Canteen Item",
+   "doc_type": "Canteen Item",
+   "icon": "package"
+  },
+  {
+   "label": "Invoices Today",
+   "type": "DocType",
+   "link_to": "Canteen Invoice",
+   "doc_type": "Canteen Invoice",
+   "icon": "file-text"
+  },
+  {
+   "label": "Open Shift",
    "type": "DocType",
    "link_to": "Canteen Shift",
-   "label": "Canteen Shift"
+   "doc_type": "Canteen Shift",
+   "icon": "clock"
   },
   {
+   "label": "Wallet Top-up",
+   "type": "DocType",
+   "link_to": "Canteen Employee Wallet",
+   "doc_type": "Canteen Employee Wallet",
+   "icon": "wallet"
+  },
+  {
+   "label": "Settings",
    "type": "DocType",
    "link_to": "Canteen Settings",
-   "label": "Canteen Settings"
+   "doc_type": "Canteen Settings",
+   "icon": "settings"
   }
  ],
  "slideshow": "",
