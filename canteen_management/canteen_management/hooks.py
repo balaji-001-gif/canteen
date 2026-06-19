@@ -60,13 +60,13 @@ doc_events = {
 scheduler_events = {
     "daily": [
         "canteen_management.canteen_management.doctype.canteen_inventory.canteen_inventory.check_low_stock",
-        "canteen_management.tasks.send_daily_sales_summary",
+        "canteen_management.canteen_management.tasks.send_daily_sales_summary",
     ],
     "weekly": [
-        "canteen_management.tasks.weekly_report",
+        "canteen_management.canteen_management.tasks.weekly_report",
     ],
     "hourly": [
-        "canteen_management.tasks.check_shift_alerts",
+        "canteen_management.canteen_management.tasks.check_shift_alerts",
     ]
 }
 
@@ -77,14 +77,14 @@ has_permission = {
 }
 
 # After install
-after_install = "canteen_management.setup.after_install"
-after_migrate = "canteen_management.setup.after_migrate"
+after_install = "canteen_management.canteen_management.setup.after_install"
+after_migrate = "canteen_management.canteen_management.setup.after_migrate"
 
 # Jinja
 jinja = {
     "methods": [
-        "canteen_management.utils.get_canteen_settings",
-        "canteen_management.utils.format_currency",
+        "canteen_management.canteen_management.utils.get_canteen_settings",
+        "canteen_management.canteen_management.utils.format_currency",
     ]
 }
 

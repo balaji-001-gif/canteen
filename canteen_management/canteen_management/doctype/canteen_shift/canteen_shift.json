@@ -1,0 +1,145 @@
+{
+  "actions": [],
+  "autoname": "field:shift_name",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "shift_name",
+    "status",
+    "col_break1",
+    "cashier",
+    "start_time",
+    "end_time",
+    "section_financials",
+    "opening_amount",
+    "closing_amount",
+    "col_break2",
+    "total_sales",
+    "total_orders",
+    "section_timestamps",
+    "opened_at",
+    "closed_at"
+  ],
+  "fields": [
+    {
+      "fieldname": "shift_name",
+      "fieldtype": "Data",
+      "label": "Shift Name",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Active\nClosed",
+      "default": "Active",
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "cashier",
+      "fieldtype": "Link",
+      "label": "Cashier",
+      "options": "User",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "start_time",
+      "fieldtype": "Time",
+      "label": "Shift Start Time",
+      "reqd": 1
+    },
+    {
+      "fieldname": "end_time",
+      "fieldtype": "Time",
+      "label": "Shift End Time"
+    },
+    {
+      "fieldname": "section_financials",
+      "fieldtype": "Section Break",
+      "label": "Financials"
+    },
+    {
+      "fieldname": "opening_amount",
+      "fieldtype": "Currency",
+      "label": "Opening Amount",
+      "default": "0"
+    },
+    {
+      "fieldname": "closing_amount",
+      "fieldtype": "Currency",
+      "label": "Closing Amount"
+    },
+    {
+      "fieldname": "col_break2",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "total_sales",
+      "fieldtype": "Currency",
+      "label": "Total Sales",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_orders",
+      "fieldtype": "Int",
+      "label": "Total Orders",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_timestamps",
+      "fieldtype": "Section Break",
+      "label": "Timestamps"
+    },
+    {
+      "fieldname": "opened_at",
+      "fieldtype": "Datetime",
+      "label": "Opened At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "closed_at",
+      "fieldtype": "Datetime",
+      "label": "Closed At",
+      "read_only": 1
+    }
+  ],
+  "icon": "fa fa-clock",
+  "module": "Canteen Management",
+  "name": "Canteen Shift",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Cashier"
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "shift_name",
+  "track_changes": 1
+}

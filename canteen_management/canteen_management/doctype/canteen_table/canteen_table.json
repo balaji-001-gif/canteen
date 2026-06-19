@@ -1,0 +1,111 @@
+{
+  "actions": [],
+  "autoname": "field:table_name",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "table_name",
+    "table_no",
+    "capacity",
+    "col_break1",
+    "status",
+    "location",
+    "qr_code",
+    "section_notes",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "table_name",
+      "fieldtype": "Data",
+      "label": "Table Name",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "table_no",
+      "fieldtype": "Int",
+      "label": "Table Number",
+      "reqd": 1,
+      "unique": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "capacity",
+      "fieldtype": "Int",
+      "label": "Capacity",
+      "default": "4",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Available\nOccupied\nReserved\nMaintenance",
+      "default": "Available",
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "location",
+      "fieldtype": "Data",
+      "label": "Location"
+    },
+    {
+      "fieldname": "qr_code",
+      "fieldtype": "Attach Image",
+      "label": "QR Code"
+    },
+    {
+      "fieldname": "section_notes",
+      "fieldtype": "Section Break",
+      "label": "Notes"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "icon": "fa fa-chair",
+  "module": "Canteen Management",
+  "name": "Canteen Table",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Cashier"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Staff"
+    }
+  ],
+  "search_fields": "table_name,table_no,status",
+  "sort_field": "table_no",
+  "sort_order": "ASC",
+  "title_field": "table_name",
+  "track_changes": 1
+}
