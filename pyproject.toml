@@ -1,0 +1,45 @@
+[project]
+name = "canteen_management"
+dynamic = ["version"]
+description = "Canteen Management System with integrated POS Billing for ERPNext v15+"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Company", email = "admin@yourcompany.com" },
+]
+
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/balaji-001-gif/canteen"
+Repository = "https://github.com/balaji-001-gif/canteen.git"
+"Bug Reports" = "https://github.com/balaji-001-gif/canteen/issues"
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "canteen_management"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "RUF"]
+ignore = [
+    "E501",
+    "E741",
+    "F401",
+    "F403",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
