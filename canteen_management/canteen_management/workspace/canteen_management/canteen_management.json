@@ -73,18 +73,28 @@
     },
     {
       "type": "Report",
-      "link_to": "Daily Sales Report",
-      "label": "Daily Sales Report"
+      "link_to": "Canteen Sales Report",
+      "label": "Canteen Sales Report"
     },
     {
       "type": "Report",
-      "link_to": "Inventory Stock Report",
-      "label": "Inventory Stock Report"
+      "link_to": "Canteen Inventory Report",
+      "label": "Canteen Inventory Report"
     },
     {
       "type": "Report",
-      "link_to": "Wallet Transaction Report",
-      "label": "Wallet Transaction Report"
+      "link_to": "Canteen Profit Loss",
+      "label": "Canteen Profit Loss"
+    },
+    {
+      "type": "Report",
+      "link_to": "Daily Sales Summary",
+      "label": "Daily Sales Summary"
+    },
+    {
+      "type": "Report",
+      "link_to": "Canteen Employee Consumption",
+      "label": "Canteen Employee Consumption"
     }
   ],
   "content": "[{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Order Management\",\"col\":12}},{\"id\":\"cb-menu\",\"type\":\"card\",\"data\":{\"card_name\":\"Menu & Items\",\"col\":12}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory & Procurement\",\"col\":12}},{\"id\":\"cb-wallet\",\"type\":\"card\",\"data\":{\"card_name\":\"Wallet & Payments\",\"col\":12}},{\"id\":\"cb-staff\",\"type\":\"card\",\"data\":{\"card_name\":\"Staff & Shifts\",\"col\":12}},{\"id\":\"cb-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":12}},{\"id\":\"cb-reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports & Analytics\",\"col\":12}}]",
@@ -283,8 +293,8 @@
       "hidden": 0,
       "idx": 22,
       "is_query_report": 1,
-      "label": "Daily Sales Report",
-      "link_to": "Daily Sales Report",
+      "label": "Canteen Sales Report",
+      "link_to": "Canteen Sales Report",
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
@@ -293,8 +303,8 @@
       "hidden": 0,
       "idx": 23,
       "is_query_report": 1,
-      "label": "Inventory Stock Report",
-      "link_to": "Inventory Stock Report",
+      "label": "Canteen Inventory Report",
+      "link_to": "Canteen Inventory Report",
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
@@ -303,8 +313,28 @@
       "hidden": 0,
       "idx": 24,
       "is_query_report": 1,
-      "label": "Wallet Transaction Report",
-      "link_to": "Wallet Transaction Report",
+      "label": "Canteen Profit Loss",
+      "link_to": "Canteen Profit Loss",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "idx": 25,
+      "is_query_report": 1,
+      "label": "Daily Sales Summary",
+      "link_to": "Daily Sales Summary",
+      "link_type": "Report",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "idx": 26,
+      "is_query_report": 1,
+      "label": "Canteen Employee Consumption",
+      "link_to": "Canteen Employee Consumption",
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
