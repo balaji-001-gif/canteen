@@ -38,22 +38,22 @@ fixtures = [
 # Document Events
 doc_events = {
     "Canteen Order": {
-        "on_submit": "canteen_management.doctype.canteen_order.canteen_order.on_submit",
-        "on_cancel": "canteen_management.doctype.canteen_order.canteen_order.on_cancel",
+        "on_submit": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.on_submit",
+        "on_cancel": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.on_cancel",
     },
     "Canteen Invoice": {
-        "on_submit": "canteen_management.doctype.canteen_invoice.canteen_invoice.on_submit",
-        "on_cancel": "canteen_management.doctype.canteen_invoice.canteen_invoice.on_cancel",
+        "on_submit": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.on_submit",
+        "on_cancel": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.on_cancel",
     },
     "Canteen Stock Entry": {
-        "on_submit": "canteen_management.doctype.canteen_stock_entry.canteen_stock_entry.on_submit",
+        "on_submit": "canteen_management.canteen_management.doctype.canteen_stock_entry.canteen_stock_entry.on_submit",
     }
 }
 
 # Scheduled Tasks
 scheduler_events = {
     "daily": [
-        "canteen_management.doctype.canteen_inventory.canteen_inventory.check_low_stock",
+        "canteen_management.canteen_management.doctype.canteen_inventory.canteen_inventory.check_low_stock",
         "canteen_management.tasks.send_daily_sales_summary",
     ],
     "weekly": [
@@ -66,8 +66,8 @@ scheduler_events = {
 
 # Roles
 has_permission = {
-    "Canteen Order": "canteen_management.doctype.canteen_order.canteen_order.has_permission",
-    "Canteen Invoice": "canteen_management.doctype.canteen_invoice.canteen_invoice.has_permission",
+    "Canteen Order": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.has_permission",
+    "Canteen Invoice": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.has_permission",
 }
 
 # After install
