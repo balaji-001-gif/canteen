@@ -1,59 +1,238 @@
 {
-  "charts": [],
-  "content": "[]",
-  "creation": "2024-01-01 00:00:00.000000",
   "doctype": "Workspace",
-  "hide_custom": 0,
-  "is_hidden": 0,
-  "label": "Canteen Management",
-  "module": "Canteen Management",
   "name": "Canteen Management",
-  "owner": "Administrator",
+  "label": "Canteen Management",
+  "title": "Canteen Management",
+  "icon": "fa fa-cutlery",
+  "module": "canteen_management",
   "public": 1,
+  "is_standard": 1,
+  "is_hidden": 0,
+  "is_default": 0,
+  "developer_mode_only": 0,
+  "disable_user_customization": 0,
+  "hide_custom": 0,
+  "restrict_to_domain": "",
+  "for_user": "",
+  "sequence_id": 23,
+  "creation": "2024-01-01 00:00:00.000000",
+  "modified": "2024-01-01 00:00:00.000000",
+  "modified_by": "Administrator",
+  "owner": "Administrator",
+  "docstatus": 0,
+  "idx": 0,
+
+  "charts": [
+    {
+      "chart_name": "Daily Order Volume",
+      "label": "Daily Order Volume"
+    },
+    {
+      "chart_name": "Wallet Top-up Trend",
+      "label": "Wallet Top-up Trend"
+    },
+    {
+      "chart_name": "Inventory Stock Levels",
+      "label": "Inventory Stock Levels"
+    }
+  ],
+
+  "content": "[{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Orders & Billing\",\"col\":6}},{\"id\":\"cb-wallet\",\"type\":\"card\",\"data\":{\"card_name\":\"Wallet & Payments\",\"col\":6}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory & Procurement\",\"col\":6}},{\"id\":\"cb-masters\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters & Settings\",\"col\":6}},{\"id\":\"cb-analytics\",\"type\":\"card\",\"data\":{\"card_name\":\"Analytics\",\"col\":6}}]",
+
   "shortcuts": [
     {
-      "color": "Green",
-      "format": "{} Active",
-      "label": "Canteen Order",
-      "link_to": "Canteen Order",
-      "stats_filter": "{ \"status\": \"Pending\" }",
-      "type": "DocType"
-    },
-    {
       "color": "Blue",
-      "label": "Canteen Item",
-      "link_to": "Canteen Item",
+      "format": "{} Open",
+      "label": "Open Orders",
+      "link_to": "Canteen Order",
+      "stats_filter": "{\"status\": \"Open\"}",
       "type": "DocType"
     },
     {
-      "color": "Orange",
-      "label": "Canteen Inventory",
-      "link_to": "Canteen Inventory",
+      "color": "Green",
+      "format": "{} Today",
+      "label": "Today's Invoices",
+      "link_to": "Canteen Invoice",
+      "stats_filter": "{\"invoice_date\": \"today\"}",
       "type": "DocType"
     },
     {
       "color": "Purple",
-      "label": "Canteen Invoice",
-      "link_to": "Canteen Invoice",
+      "format": "{} Active",
+      "label": "Active Wallets",
+      "link_to": "Canteen Employee Wallet",
+      "stats_filter": "{\"status\": \"Active\"}",
       "type": "DocType"
     },
     {
-      "color": "Yellow",
-      "label": "Canteen Shift",
-      "link_to": "Canteen Shift",
+      "color": "Orange",
+      "format": "{} Pending",
+      "label": "Pending Stock Entries",
+      "link_to": "Canteen Stock Entry",
+      "stats_filter": "{\"status\": \"Draft\"}",
+      "type": "DocType"
+    },
+    {
+      "color": "Red",
+      "format": "{} Low",
+      "label": "Low Inventory Items",
+      "link_to": "Canteen Inventory",
+      "stats_filter": "{\"status\": \"Low Stock\"}",
       "type": "DocType"
     },
     {
       "color": "Teal",
-      "label": "Employee Wallet",
-      "link_to": "Canteen Employee Wallet",
+      "format": "{} Active",
+      "label": "Active Suppliers",
+      "link_to": "Canteen Supplier",
+      "stats_filter": "{\"status\": \"Active\"}",
       "type": "DocType"
     },
     {
-      "color": "Gray",
+      "color": "Cyan",
+      "label": "Canteen Tables",
+      "link_to": "Canteen Table",
+      "type": "DocType"
+    },
+    {
+      "color": "Yellow",
       "label": "Canteen Settings",
       "link_to": "Canteen Settings",
       "type": "DocType"
+    }
+  ],
+
+  "links": [
+    {
+      "hidden": 0, "idx": 1,
+      "label": "Orders & Billing",
+      "title": "Orders & Billing",
+      "type": "Card Break",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 2,
+      "label": "Canteen Order",
+      "link_to": "Canteen Order",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 3,
+      "label": "Canteen Table",
+      "link_to": "Canteen Table",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 4,
+      "label": "Canteen Invoice",
+      "link_to": "Canteen Invoice",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 5,
+      "label": "Wallet & Payments",
+      "title": "Wallet & Payments",
+      "type": "Card Break",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 6,
+      "label": "Canteen Employee Wallet",
+      "link_to": "Canteen Employee Wallet",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 7,
+      "label": "Canteen Wallet Transaction",
+      "link_to": "Canteen Wallet Transaction",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 8,
+      "label": "Inventory & Procurement",
+      "title": "Inventory & Procurement",
+      "type": "Card Break",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 9,
+      "label": "Canteen Item",
+      "link_to": "Canteen Item",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 10,
+      "label": "Canteen Category",
+      "link_to": "Canteen Category",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 11,
+      "label": "Canteen Inventory",
+      "link_to": "Canteen Inventory",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 1
+    },
+    {
+      "hidden": 0, "idx": 12,
+      "label": "Canteen Stock Entry",
+      "link_to": "Canteen Stock Entry",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 13,
+      "label": "Canteen Supplier",
+      "link_to": "Canteen Supplier",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 14,
+      "label": "Masters & Settings",
+      "title": "Masters & Settings",
+      "type": "Card Break",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 15,
+      "label": "Canteen Shift",
+      "link_to": "Canteen Shift",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 16,
+      "label": "Canteen Settings",
+      "link_to": "Canteen Settings",
+      "link_type": "DocType",
+      "type": "Link",
+      "onboard": 0
+    },
+    {
+      "hidden": 0, "idx": 17,
+      "label": "Analytics",
+      "title": "Analytics",
+      "type": "Card Break",
+      "onboard": 0
     }
   ]
 }
