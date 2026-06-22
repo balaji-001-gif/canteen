@@ -4,13 +4,15 @@ app_publisher = "Your Company"
 app_description = "Canteen Management System with integrated POS Billing"
 app_email = "admin@yourcompany.com"
 app_license = "MIT"
-app_version = "1.0.0"
+
+# NOTE: app_version is not a recognized hooks.py key — Frappe reads the
+# version from `__version__` in canteen_management/__init__.py instead.
+# Set it there, not here. (Removed from this file.)
 
 # Includes in <head>
 app_include_css = [
     "/assets/canteen_management/css/canteen.css"
 ]
-
 app_include_js = [
     "/assets/canteen_management/js/canteen.js"
 ]
@@ -20,9 +22,18 @@ web_include_css = []
 web_include_js = []
 
 # Fixtures
+# - "Custom Field" exports all Custom Field records — standard practice for
+#   field-level customizations you want versioned with the app.
+# - "Workspace" is deliberately NOT included here. The workspace JSON built
+#   earlier has is_standard=1, which means Frappe syncs it automatically on
+#   migrate from:
+#     canteen_management/canteen_management/workspace/canteen_management/canteen_management.json
+#   Fixture-exporting "Workspace" on top of that gives you two competing
+#   sources of truth for the same doc. If you'd rather manage the workspace
+#   via fixtures instead, set is_standard=0 on the doc and add "Workspace"
+#   back to this list — don't do both.
 fixtures = [
-    "custom_field.json",
-    "workspace.json",
+    "Custom Field",
     {
         "doctype": "Role",
         "filters": [["name", "in", [
@@ -36,6 +47,11 @@ fixtures = [
 ]
 
 # Document Events
+# NOTE: these dotted paths assume the module name is "canteen_management"
+# (i.e. module_name == app_name). If your module folder is named anything
+# else, every path below resolves to nothing and the hook silently never
+# fires — no error, it just won't run. Verify against
+# canteen_management/modules.txt before relying on this.
 doc_events = {
     "Canteen Order": {
         "on_submit": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.on_submit",
@@ -64,13 +80,13 @@ scheduler_events = {
     ]
 }
 
-# Roles
+# Permissions
 has_permission = {
     "Canteen Order": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.has_permission",
     "Canteen Invoice": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.has_permission",
 }
 
-# After install
+# After install / migrate
 after_install = "canteen_management.setup.after_install"
 after_migrate = "canteen_management.setup.after_migrate"
 
@@ -82,10 +98,7 @@ jinja = {
     ]
 }
 
-# Override Whitelisted Methods
-override_whitelisted_methods = {}
-
-# Website Route
+# Website Route Rules
 website_route_rules = [
     {"from_route": "/canteen-pos", "to_route": "canteen_pos"},
 ]
