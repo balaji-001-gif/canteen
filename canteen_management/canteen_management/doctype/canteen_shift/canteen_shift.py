@@ -1,9 +1,13 @@
 import frappe
 from frappe.model.document import Document
-from frappe.utils import flt, now, today
+from frappe.utils import flt, now, nowtime, today
 
 
 class CanteenShift(Document):
+    def before_insert(self):
+        if not self.opened_at:
+            self.opened_at = now()
+
     def validate(self):
         self.validate_single_active_shift()
 
@@ -14,9 +18,9 @@ class CanteenShift(Document):
                 {
                     "cashier": self.cashier,
                     "status": "Active",
-                    "name": ["!=", self.name or ""]
+                    "name": ["!=", self.name or ""],
                 },
-                "name"
+                "name",
             )
             if existing:
                 frappe.throw(
@@ -25,14 +29,20 @@ class CanteenShift(Document):
                 )
 
     def on_update(self):
-        if self.status == "Closed":
-            self.calculate_shift_summary()
+        if self.status == "Closed" and not self.closed_at:
+            self.closed_at = now()
+            self.end_time = nowtime()
+            frappe.db.set_value(
+                "Canteen Shift", self.name,
+                {"closed_at": self.closed_at, "end_time": self.end_time}
+            )
+        self.calculate_totals()
 
-    def calculate_shift_summary(self):
+    def calculate_totals(self):
         orders = frappe.get_all(
             "Canteen Order",
             filters={"shift": self.name, "docstatus": 1},
-            fields=["total_amount", "payment_mode"]
+            fields=["total_amount", "payment_mode"],
         )
 
         total_sales = 0
@@ -53,23 +63,28 @@ class CanteenShift(Document):
             elif mode == "credit":
                 credit_sales += amt
 
-        frappe.db.set_value("Canteen Shift", self.name, {
-            "total_sales": total_sales,
-            "total_orders": len(orders),
-            "cash_sales": cash_sales,
-            "card_sales": card_sales,
-            "upi_sales": upi_sales,
-            "wallet_sales": wallet_sales,
-            "credit_sales": credit_sales,
-        })
+        frappe.db.set_value(
+            "Canteen Shift",
+            self.name,
+            {
+                "total_sales": total_sales,
+                "total_orders": len(orders),
+                "cash_sales": cash_sales,
+                "card_sales": card_sales,
+                "upi_sales": upi_sales,
+                "wallet_sales": wallet_sales,
+                "credit_sales": credit_sales,
+            },
+        )
 
 
 @frappe.whitelist()
-def close_shift(shift_name, closing_cash=0):
+def close_shift(shift_name, closing_amount=0):
     """Close a shift"""
     doc = frappe.get_doc("Canteen Shift", shift_name)
+    if doc.status != "Active":
+        frappe.throw("Shift is not active")
     doc.status = "Closed"
-    doc.end_time = frappe.utils.nowtime()
-    doc.closing_cash = flt(closing_cash)
+    doc.closing_amount = flt(closing_amount)
     doc.save(ignore_permissions=True)
     return {"status": "success"}

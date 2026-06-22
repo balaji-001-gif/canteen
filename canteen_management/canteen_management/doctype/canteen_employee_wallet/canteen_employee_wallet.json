@@ -58,6 +58,13 @@
       "read_only": 1
     },
     {
+      "fieldname": "credit_limit",
+      "fieldtype": "Currency",
+      "label": "Credit Limit",
+      "default": "0",
+      "in_list_view": 1
+    },
+    {
       "fieldname": "total_credited",
       "fieldtype": "Currency",
       "label": "Total Credited",

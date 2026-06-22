@@ -5,7 +5,10 @@
   "editable_grid": 1,
   "engine": "InnoDB",
   "field_order": [
-    "payment_mode"
+    "payment_mode",
+    "mode_label",
+    "is_default",
+    "is_active"
   ],
   "fields": [
     {
@@ -16,6 +19,26 @@
       "reqd": 1,
       "in_list_view": 1,
       "bold": 1
+    },
+    {
+      "fieldname": "mode_label",
+      "fieldtype": "Data",
+      "label": "Display Label",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_default",
+      "fieldtype": "Check",
+      "label": "Default",
+      "default": "0",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active",
+      "default": "1",
+      "in_list_view": 1
     }
   ],
   "istable": 1,

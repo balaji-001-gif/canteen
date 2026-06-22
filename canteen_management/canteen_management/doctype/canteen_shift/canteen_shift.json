@@ -14,7 +14,9 @@
     "end_time",
     "status",
     "section_summary",
-    "opening_cash",
+    "opening_amount",
+    "opened_at",
+    "closed_at",
     "total_sales",
     "total_orders",
     "col_break2",
@@ -23,7 +25,7 @@
     "upi_sales",
     "wallet_sales",
     "credit_sales",
-    "closing_cash",
+    "closing_amount",
     "section_notes",
     "notes"
   ],
@@ -90,10 +92,22 @@
       "label": "Shift Summary"
     },
     {
-      "fieldname": "opening_cash",
+      "fieldname": "opening_amount",
       "fieldtype": "Currency",
-      "label": "Opening Cash",
+      "label": "Opening Amount",
       "default": "0"
+    },
+    {
+      "fieldname": "opened_at",
+      "fieldtype": "Datetime",
+      "label": "Opened At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "closed_at",
+      "fieldtype": "Datetime",
+      "label": "Closed At",
+      "read_only": 1
     },
     {
       "fieldname": "total_sales",
@@ -145,9 +159,9 @@
       "read_only": 1
     },
     {
-      "fieldname": "closing_cash",
+      "fieldname": "closing_amount",
       "fieldtype": "Currency",
-      "label": "Closing Cash"
+      "label": "Closing Amount"
     },
     {
       "fieldname": "section_notes",
