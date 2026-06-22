@@ -221,7 +221,7 @@
       "cancel": 1,
       "amend": 1,
       "write": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Admin"
     },
     {
@@ -232,7 +232,7 @@
       "submit": 1,
       "cancel": 1,
       "write": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Manager"
     },
     {
@@ -241,7 +241,7 @@
       "submit": 1,
       "write": 1,
       "print": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Cashier"
     },
     {
