@@ -119,7 +119,7 @@
       "delete": 1,
       "read": 1,
       "write": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Admin"
     },
     {
