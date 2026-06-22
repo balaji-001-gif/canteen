@@ -1,1 +1,1 @@
-# v1_0 patches package
+# Canteen Management - Patches v1.0

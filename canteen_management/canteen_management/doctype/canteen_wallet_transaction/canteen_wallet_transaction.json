@@ -1,0 +1,141 @@
+{
+  "actions": [],
+  "autoname": "naming_series:",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "wallet",
+    "employee",
+    "employee_name",
+    "col_break1",
+    "transaction_type",
+    "amount",
+    "balance_after",
+    "transaction_date",
+    "section_reference",
+    "reference_document",
+    "reference_name",
+    "remarks"
+  ],
+  "fields": [
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "WTXN-.YYYY.-.###",
+      "reqd": 1
+    },
+    {
+      "fieldname": "wallet",
+      "fieldtype": "Link",
+      "label": "Wallet",
+      "options": "Canteen Employee Wallet",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "employee",
+      "fieldtype": "Link",
+      "label": "Employee",
+      "options": "Employee",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "employee_name",
+      "fieldtype": "Data",
+      "label": "Employee Name",
+      "fetch_from": "employee.employee_name",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "transaction_type",
+      "fieldtype": "Select",
+      "label": "Transaction Type",
+      "options": "Credit\nDebit",
+      "reqd": 1,
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "amount",
+      "fieldtype": "Currency",
+      "label": "Amount",
+      "reqd": 1,
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "balance_after",
+      "fieldtype": "Currency",
+      "label": "Balance After Transaction",
+      "read_only": 1
+    },
+    {
+      "fieldname": "transaction_date",
+      "fieldtype": "Datetime",
+      "label": "Transaction Date",
+      "default": "now",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "section_reference",
+      "fieldtype": "Section Break",
+      "label": "Reference"
+    },
+    {
+      "fieldname": "reference_document",
+      "fieldtype": "Select",
+      "label": "Reference Document",
+      "options": "\nCanteen Order\nCanteen Invoice"
+    },
+    {
+      "fieldname": "reference_name",
+      "fieldtype": "Dynamic Link",
+      "label": "Reference Name",
+      "options": "reference_document"
+    },
+    {
+      "fieldname": "remarks",
+      "fieldtype": "Small Text",
+      "label": "Remarks"
+    }
+  ],
+  "icon": "fa fa-exchange-alt",
+  "module": "Canteen Management",
+  "name": "Canteen Wallet Transaction",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Cashier"
+    },
+    {
+      "read": 1,
+      "role": "Canteen User"
+    }
+  ],
+  "sort_field": "transaction_date",
+  "sort_order": "DESC"
+}

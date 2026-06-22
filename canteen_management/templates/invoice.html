@@ -1,91 +1,119 @@
-<div class="invoice-container">
-    <div class="invoice-header" style="text-align: center; margin-bottom: 20px;">
-        <h2>{{ settings.canteen_name or "Canteen" }}</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Canteen Invoice - {{ invoice.name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 10px; }
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h2 { margin: 0; font-size: 16px; }
+        .header p { margin: 2px 0; font-size: 11px; }
+        .divider { border-top: 1px dashed #000; margin: 8px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; padding: 3px 0; }
+        td { padding: 3px 0; font-size: 11px; }
+        .right { text-align: right; }
+        .totals { margin-top: 10px; }
+        .totals tr td { padding: 2px 0; }
+        .grand-total { font-weight: bold; font-size: 14px; }
+        .footer { text-align: center; margin-top: 15px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if settings.receipt_header %}
+            <p>{{ settings.receipt_header }}</p>
+        {% else %}
+            <h2>{{ settings.canteen_name or "Canteen" }}</h2>
+        {% endif %}
         {% if settings.gst_number %}
-        <p><strong>GST:</strong> {{ settings.gst_number }}</p>
+            <p>GSTIN: {{ settings.gst_number }}</p>
         {% endif %}
-        <h3>Tax Invoice</h3>
     </div>
-    
-    <div class="invoice-details" style="margin-bottom: 15px;">
-        <table style="width: 100%;">
+
+    <div class="divider"></div>
+    <table>
+        <tr>
+            <td>Invoice No:</td><td class="right"><b>{{ invoice.name }}</b></td>
+        </tr>
+        <tr>
+            <td>Date:</td><td class="right">{{ invoice.invoice_date }}</td>
+        </tr>
+        {% if invoice.customer_name %}
+        <tr>
+            <td>Customer:</td><td class="right">{{ invoice.customer_name }}</td>
+        </tr>
+        {% endif %}
+        {% if invoice.cashier %}
+        <tr>
+            <td>Cashier:</td><td class="right">{{ invoice.cashier }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div class="divider"></div>
+    <table>
+        <thead>
             <tr>
-                <td><strong>Invoice No:</strong> {{ invoice.name }}</td>
-                <td style="text-align: right;"><strong>Date:</strong> {{ invoice.invoice_date }}</td>
+                <th>Item</th>
+                <th class="right">Qty</th>
+                <th class="right">Rate</th>
+                <th class="right">Amount</th>
             </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.items %}
             <tr>
-                <td><strong>Order No:</strong> {{ invoice.order }}</td>
-                <td style="text-align: right;"><strong>Cashier:</strong> {{ invoice.cashier }}</td>
+                <td>{{ item.item_name }}</td>
+                <td class="right">{{ item.quantity }}</td>
+                <td class="right">{{ frappe.utils.fmt_money(item.rate) }}</td>
+                <td class="right">{{ frappe.utils.fmt_money(item.amount) }}</td>
             </tr>
-            {% if invoice.customer_name %}
-            <tr>
-                <td><strong>Customer:</strong> {{ invoice.customer_name }}</td>
-            </tr>
-            {% endif %}
-        </table>
-    </div>
-    
-    <div class="invoice-items" style="margin-bottom: 15px;">
-        <table style="width: 100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr style="background-color: #f0f0f0;">
-                    <th style="padding: 8px;">#</th>
-                    <th style="padding: 8px; text-align: left;">Item</th>
-                    <th style="padding: 8px; text-align: right;">Qty</th>
-                    <th style="padding: 8px; text-align: right;">Rate</th>
-                    <th style="padding: 8px; text-align: right;">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in invoice.items %}
-                <tr>
-                    <td style="padding: 5px; text-align: center;">{{ loop.index }}</td>
-                    <td style="padding: 5px;">{{ item.item_name }}</td>
-                    <td style="padding: 5px; text-align: right;">{{ item.quantity }}</td>
-                    <td style="padding: 5px; text-align: right;">{{ "{:,.2f}".format(item.rate) }}</td>
-                    <td style="padding: 5px; text-align: right;">{{ "{:,.2f}".format(item.amount) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="invoice-totals" style="margin-bottom: 15px;">
-        <table style="width: 100%;">
-            <tr>
-                <td style="text-align: right; padding: 3px;"><strong>Subtotal:</strong></td>
-                <td style="text-align: right; padding: 3px; width: 100px;">{{ "{:,.2f}".format(invoice.subtotal) }}</td>
-            </tr>
-            <tr>
-                <td style="text-align: right; padding: 3px;"><strong>Tax Amount:</strong></td>
-                <td style="text-align: right; padding: 3px;">{{ "{:,.2f}".format(invoice.tax_amount) }}</td>
-            </tr>
-            {% if invoice.discount_amount %}
-            <tr>
-                <td style="text-align: right; padding: 3px;"><strong>Discount:</strong></td>
-                <td style="text-align: right; padding: 3px;">-{{ "{:,.2f}".format(invoice.discount_amount) }}</td>
-            </tr>
-            {% endif %}
-            <tr style="font-size: 1.2em;">
-                <td style="text-align: right; padding: 5px;"><strong>Total Amount:</strong></td>
-                <td style="text-align: right; padding: 5px;"><strong>{{ "{:,.2f}".format(invoice.total_amount) }}</strong></td>
-            </tr>
-            <tr>
-                <td style="text-align: right; padding: 3px;"><strong>Paid:</strong></td>
-                <td style="text-align: right; padding: 3px;">{{ "{:,.2f}".format(invoice.paid_amount) }}</td>
-            </tr>
-            <tr>
-                <td style="text-align: right; padding: 3px;"><strong>Change:</strong></td>
-                <td style="text-align: right; padding: 3px;">{{ "{:,.2f}".format(invoice.change_amount) }}</td>
-            </tr>
-        </table>
-    </div>
-    
-    <div class="invoice-footer" style="text-align: center; margin-top: 30px; font-size: 0.9em;">
-        <p><strong>Payment Mode:</strong> {{ invoice.payment_mode }}</p>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <table class="totals">
+        <tr>
+            <td>Subtotal</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.subtotal) }}</td>
+        </tr>
+        {% if invoice.tax_amount %}
+        <tr>
+            <td>Tax</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.tax_amount) }}</td>
+        </tr>
+        {% endif %}
+        {% if invoice.discount_amount %}
+        <tr>
+            <td>Discount</td>
+            <td class="right">- {{ frappe.utils.fmt_money(invoice.discount_amount) }}</td>
+        </tr>
+        {% endif %}
+        <tr class="grand-total">
+            <td>TOTAL</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.total_amount) }}</td>
+        </tr>
+        <tr>
+            <td>Payment ({{ invoice.payment_mode }})</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.paid_amount) }}</td>
+        </tr>
+        {% if invoice.change_amount %}
+        <tr>
+            <td>Change</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.change_amount) }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <div class="divider"></div>
+    <div class="footer">
         {% if settings.receipt_footer %}
-        <p>{{ settings.receipt_footer }}</p>
+            <p>{{ settings.receipt_footer }}</p>
+        {% else %}
+            <p>Thank you for visiting! Come again.</p>
         {% endif %}
-        <p style="margin-top: 20px;">Thank you! Visit again!</p>
     </div>
-</div>
+</body>
+</html>

@@ -1,247 +1,279 @@
-/* Canteen Management System Styles */
+/* Canteen Management - Global Styles */
 
-/* POS Interface */
+/* ─── POS Container ─── */
 .canteen-pos-container {
     display: flex;
-    height: calc(100vh - 60px);
-    background: #f5f5f5;
+    height: calc(100vh - 80px);
+    gap: 0;
+    background: #f5f6fa;
+    font-family: 'Inter', 'Roboto', Arial, sans-serif;
 }
 
-.canteen-pos-items {
+/* ─── Left: Item Panel ─── */
+.pos-left {
     flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-}
-
-.canteen-pos-cart {
-    width: 380px;
-    background: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-}
-
-/* Item Cards */
-.canteen-item-card {
-    display: inline-block;
-    width: 150px;
-    margin: 8px;
+    overflow: hidden;
     padding: 12px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: center;
+    background: #fff;
+    border-right: 1px solid #e8eaed;
 }
 
-.canteen-item-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.canteen-item-card .item-name {
-    font-weight: 600;
-    font-size: 14px;
-    margin: 5px 0;
-}
-
-.canteen-item-card .item-price {
-    color: #28a745;
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.canteen-item-card .stock-badge {
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 10px;
-}
-
-.canteen-item-card .stock-badge.low {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.canteen-item-card .stock-badge.out {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* Cart Styles */
-.canteen-cart-header {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.canteen-cart-items {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-.canteen-cart-item {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.canteen-cart-item .item-qty {
-    width: 60px;
-    text-align: center;
-}
-
-.canteen-cart-item .item-info {
-    flex: 1;
-    padding: 0 10px;
-}
-
-.canteen-cart-item .item-total {
-    font-weight: 600;
-}
-
-.canteen-cart-item .remove-btn {
-    color: #dc3545;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.canteen-cart-footer {
-    padding: 15px;
-    border-top: 2px solid #333;
-    background: #f8f9fa;
-}
-
-.canteen-cart-footer .total-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
-    font-weight: 700;
+.pos-search-bar {
     margin-bottom: 10px;
 }
 
-.canteen-cart-footer .checkout-btn {
-    width: 100%;
-    padding: 12px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
+.pos-search-bar input {
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+}
+
+/* ─── Category Bar ─── */
+.category-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.category-btn {
+    border-radius: 20px !important;
+    padding: 4px 14px !important;
+    font-size: 12px;
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+    color: #555 !important;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
-.canteen-cart-footer .checkout-btn:hover {
-    background: #218838;
+.category-btn.active,
+.category-btn:hover {
+    background: #2ecc71 !important;
+    color: #fff !important;
+    border-color: #2ecc71 !important;
 }
 
-/* Status Badges */
-.canteen-status-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
+/* ─── Item Grid ─── */
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.item-card {
+    border: 1px solid #e8eaed;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    border-color: #2ecc71;
+}
+
+.item-card .item-img {
+    height: 90px;
+    background: #f5f6fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.item-card .item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-card .no-img {
+    font-size: 32px;
+    opacity: 0.5;
+}
+
+.item-card .item-info {
+    padding: 8px 10px;
+}
+
+.item-card .item-name {
     font-size: 12px;
     font-weight: 600;
+    color: #2d3436;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.canteen-status-badge.pending {
-    background: #fff3cd;
-    color: #856404;
+.item-card .item-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2ecc71;
 }
 
-.canteen-status-badge.preparing {
-    background: #cce5ff;
-    color: #004085;
+.veg-dot {
+    font-size: 10px;
 }
 
-.canteen-status-badge.ready {
-    background: #d4edda;
-    color: #155724;
-}
-
-.canteen-status-badge.served {
-    background: #d6d8db;
-    color: #383d41;
-}
-
-.canteen-status-badge.cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.canteen-status-badge.completed {
-    background: #c3e6cb;
-    color: #1e7e34;
-}
-
-/* Table Grid */
-.canteen-table-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-    padding: 15px;
-}
-
-.canteen-table-item {
-    padding: 20px 10px;
-    text-align: center;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.canteen-table-item.available {
-    background: #d4edda;
-    color: #155724;
-}
-
-.canteen-table-item.occupied {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.canteen-table-item.reserved {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.canteen-table-item.maintenance {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.canteen-table-item:hover {
-    transform: scale(1.05);
-}
-
-/* Kitchen Display */
-.canteen-kitchen-order {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.canteen-kitchen-order .order-header {
+/* ─── Right: Cart Panel ─── */
+.pos-right {
+    width: 340px;
+    min-width: 300px;
     display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    flex-direction: column;
+    background: #fff;
+    border-left: 1px solid #e8eaed;
+    padding: 12px;
+}
+
+.cart-header h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.cart-top-row {
+    margin-bottom: 10px;
+}
+
+.cart-items-list {
+    flex: 1;
+    overflow-y: auto;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
     margin-bottom: 8px;
 }
 
-/* Receipt Print */
-@media print {
-    .no-print {
-        display: none !important;
-    }
-    .invoice-container {
-        font-size: 12px;
-    }
+/* ─── Cart Row ─── */
+.cart-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 4px;
+    border-bottom: 1px solid #f5f6fa;
+    font-size: 13px;
+}
+
+.cart-item-name {
+    flex: 1;
+    font-weight: 500;
+    color: #2d3436;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cart-qty {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.qty-btn {
+    width: 22px;
+    height: 22px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    font-size: 13px;
+    line-height: 1;
+    border: 1px solid #ddd !important;
+}
+
+.qty-val {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.cart-amount {
+    min-width: 54px;
+    text-align: right;
+    font-weight: 600;
+    color: #2ecc71;
+}
+
+.remove-btn {
+    padding: 0 6px !important;
+    font-size: 11px !important;
+    border-radius: 4px !important;
+}
+
+/* ─── Cart Totals ─── */
+.cart-totals {
+    border-top: 2px solid #f0f0f0;
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 3px 0;
+    color: #636e72;
+}
+
+.total-row.grand {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3436;
+    border-top: 1px dashed #ddd;
+    padding-top: 8px;
+    margin-top: 4px;
+}
+
+/* ─── Payment ─── */
+.cart-payment {
+    margin-bottom: 10px;
+}
+
+.cart-payment select,
+.cart-payment input {
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* ─── Action Buttons ─── */
+.cart-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.cart-actions .btn {
+    flex: 1;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px;
+}
+
+.cart-actions .btn-primary {
+    background: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.cart-actions .btn-primary:hover:not(:disabled) {
+    background: #27ae60;
+    border-color: #27ae60;
+}
+
+.cart-actions .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

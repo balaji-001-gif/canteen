@@ -1,0 +1,18 @@
+{
+  "add_total_row": 1,
+  "columns": [],
+  "creation": "2024-01-01 00:00:00.000000",
+  "disabled": 0,
+  "doctype": "Report",
+  "filters": [
+    {"fieldname": "from_date", "fieldtype": "Date", "label": "From Date", "mandatory": 1, "default": "Today"},
+    {"fieldname": "to_date", "fieldtype": "Date", "label": "To Date", "mandatory": 1, "default": "Today"}
+  ],
+  "is_standard": "Yes",
+  "module": "Canteen Management",
+  "name": "Daily Sales Summary",
+  "ref_doctype": "Canteen Order",
+  "report_name": "Daily Sales Summary",
+  "report_type": "Script Report",
+  "roles": [{"role": "Canteen Admin"}, {"role": "Canteen Manager"}]
+}

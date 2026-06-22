@@ -1,0 +1,51 @@
+<div class="canteen-pos-container">
+    <!-- Left: Item Panel -->
+    <div class="pos-left">
+        <div class="pos-search-bar">
+            <input type="text" id="item-search" class="form-control" placeholder="🔍 Search items by name or barcode...">
+        </div>
+        <div id="category-list" class="category-bar"></div>
+        <div id="item-grid" class="item-grid"></div>
+    </div>
+
+    <!-- Right: Cart Panel -->
+    <div class="pos-right">
+        <div class="cart-header">
+            <h4>🛒 Current Order</h4>
+            <div class="cart-top-row">
+                <input type="text" id="customer-name" class="form-control" placeholder="Customer Name (optional)">
+            </div>
+        </div>
+
+        <div id="cart-items" class="cart-items-list"></div>
+
+        <div class="cart-totals">
+            <div class="total-row">
+                <span>Subtotal</span><span id="subtotal">₹0.00</span>
+            </div>
+            <div class="total-row">
+                <span>Tax</span><span id="tax-total">₹0.00</span>
+            </div>
+            <div class="total-row grand">
+                <span>Grand Total</span><span id="grand-total">₹0.00</span>
+            </div>
+        </div>
+
+        <div class="cart-payment">
+            <select id="payment-mode" class="form-control">
+                <option value="Cash">Cash</option>
+                <option value="Card">Card</option>
+                <option value="UPI">UPI</option>
+                <option value="Wallet">Wallet</option>
+                <option value="Credit">Credit</option>
+            </select>
+            <input type="number" id="paid-amount" class="form-control mt-2"
+                   placeholder="Amount Tendered (₹)" min="0" step="0.01">
+        </div>
+
+        <div class="cart-actions">
+            <button id="btn-clear" class="btn btn-default btn-block">🗑 Clear</button>
+            <button id="btn-pay" class="btn btn-primary btn-block" disabled>✅ Place Order</button>
+        </div>
+    </div>
+</div>

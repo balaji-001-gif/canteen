@@ -1,0 +1,59 @@
+{
+  "charts": [],
+  "content": "[]",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "Workspace",
+  "hide_custom": 0,
+  "is_hidden": 0,
+  "label": "Canteen Management",
+  "module": "Canteen Management",
+  "name": "Canteen Management",
+  "owner": "Administrator",
+  "public": 1,
+  "shortcuts": [
+    {
+      "color": "Green",
+      "format": "{} Active",
+      "label": "Canteen Order",
+      "link_to": "Canteen Order",
+      "stats_filter": "{ \"status\": \"Pending\" }",
+      "type": "DocType"
+    },
+    {
+      "color": "Blue",
+      "label": "Canteen Item",
+      "link_to": "Canteen Item",
+      "type": "DocType"
+    },
+    {
+      "color": "Orange",
+      "label": "Canteen Inventory",
+      "link_to": "Canteen Inventory",
+      "type": "DocType"
+    },
+    {
+      "color": "Purple",
+      "label": "Canteen Invoice",
+      "link_to": "Canteen Invoice",
+      "type": "DocType"
+    },
+    {
+      "color": "Yellow",
+      "label": "Canteen Shift",
+      "link_to": "Canteen Shift",
+      "type": "DocType"
+    },
+    {
+      "color": "Teal",
+      "label": "Employee Wallet",
+      "link_to": "Canteen Employee Wallet",
+      "type": "DocType"
+    },
+    {
+      "color": "Gray",
+      "label": "Canteen Settings",
+      "link_to": "Canteen Settings",
+      "type": "DocType"
+    }
+  ]
+}

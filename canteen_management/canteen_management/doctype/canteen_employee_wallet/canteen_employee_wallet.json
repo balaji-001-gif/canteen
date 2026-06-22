@@ -1,0 +1,128 @@
+{
+  "actions": [],
+  "autoname": "field:employee",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "employee",
+    "employee_name",
+    "department",
+    "col_break1",
+    "balance",
+    "total_credited",
+    "total_debited",
+    "is_active",
+    "section_details",
+    "last_transaction_date",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "employee",
+      "fieldtype": "Link",
+      "label": "Employee",
+      "options": "Employee",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "employee_name",
+      "fieldtype": "Data",
+      "label": "Employee Name",
+      "fetch_from": "employee.employee_name",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "department",
+      "fieldtype": "Link",
+      "label": "Department",
+      "options": "Department",
+      "fetch_from": "employee.department",
+      "read_only": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "balance",
+      "fieldtype": "Currency",
+      "label": "Current Balance",
+      "default": "0",
+      "in_list_view": 1,
+      "bold": 1,
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_credited",
+      "fieldtype": "Currency",
+      "label": "Total Credited",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "total_debited",
+      "fieldtype": "Currency",
+      "label": "Total Debited",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active",
+      "default": "1",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "section_details",
+      "fieldtype": "Section Break",
+      "label": "Details"
+    },
+    {
+      "fieldname": "last_transaction_date",
+      "fieldtype": "Datetime",
+      "label": "Last Transaction Date",
+      "read_only": 1
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "icon": "fa fa-wallet",
+  "module": "Canteen Management",
+  "name": "Canteen Employee Wallet",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "role": "Canteen Cashier"
+    },
+    {
+      "read": 1,
+      "role": "Canteen User"
+    }
+  ],
+  "sort_field": "employee_name",
+  "sort_order": "ASC",
+  "title_field": "employee_name"
+}

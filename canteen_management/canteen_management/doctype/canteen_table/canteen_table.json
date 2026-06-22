@@ -1,0 +1,106 @@
+{
+  "actions": [],
+  "autoname": "field:table_number",
+  "creation": "2024-01-01 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "table_number",
+    "table_name",
+    "col_break1",
+    "capacity",
+    "status",
+    "is_active",
+    "section_details",
+    "location",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "table_number",
+      "fieldtype": "Data",
+      "label": "Table Number",
+      "reqd": 1,
+      "unique": 1,
+      "bold": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "table_name",
+      "fieldtype": "Data",
+      "label": "Table Name",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "col_break1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "capacity",
+      "fieldtype": "Int",
+      "label": "Seating Capacity",
+      "default": "4",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Available\nOccupied\nReserved\nCleaning",
+      "default": "Available",
+      "reqd": 1,
+      "in_list_view": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active",
+      "default": "1",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "section_details",
+      "fieldtype": "Section Break",
+      "label": "Details"
+    },
+    {
+      "fieldname": "location",
+      "fieldtype": "Data",
+      "label": "Location / Zone"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "icon": "fa fa-chair",
+  "module": "Canteen Management",
+  "name": "Canteen Table",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Admin"
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Manager"
+    },
+    {
+      "read": 1,
+      "write": 1,
+      "role": "Canteen Cashier"
+    }
+  ],
+  "sort_field": "table_number",
+  "sort_order": "ASC",
+  "title_field": "table_number"
+}
