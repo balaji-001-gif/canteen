@@ -15,5 +15,4 @@
   "ref_doctype": "Canteen Order",
   "report_name": "Canteen Employee Consumption",
   "report_type": "Script Report",
-  "roles": [{"role": "Canteen Admin"}, {"role": "Canteen Manager"}]
 }
