@@ -185,6 +185,7 @@
       "cancel": 1,
       "amend": 1,
       "write": 1,
+      "report": 1
       "role": "Canteen Admin"
     },
     {
