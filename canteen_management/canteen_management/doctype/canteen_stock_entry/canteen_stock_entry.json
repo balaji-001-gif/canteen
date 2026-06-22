@@ -140,7 +140,7 @@
       "submit": 1,
       "cancel": 1,
       "amend": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Admin"
     },
     {
@@ -149,7 +149,7 @@
       "write": 1,
       "submit": 1,
       "cancel": 1,
-      "report": 1
+      "report": 1,
       "role": "Canteen Manager"
     },
     {
