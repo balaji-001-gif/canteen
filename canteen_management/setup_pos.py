@@ -105,49 +105,65 @@ def _create_item_group():
 
 
 def _create_payment_modes(company):
-    """Create standard payment modes for the canteen."""
+    """Create standard payment modes for the canteen.
+    Returns list of (mode_name, has_account) tuples.
+    """
     abbr = frappe.db.get_value("Company", company, "abbr")
     modes_to_create = [
         {
             "mode_of_payment": "Cash",
             "type": "Cash",
-            "account": f"Cash - {abbr}",
+            "account_hint": f"Cash - {abbr}",
         },
         {
             "mode_of_payment": "Card",
             "type": "Bank",
-            "account": None,  # user must set manually
+            "account_hint": None,  # will try to find automatically
         },
         {
             "mode_of_payment": "UPI",
             "type": "Bank",
-            "account": None,  # user must set manually
+            "account_hint": None,
         },
         {
             "mode_of_payment": "Wallet",
             "type": "Cash",
-            "account": None,  # user must set manually
+            "account_hint": None,
         },
     ]
 
-    created_modes = []
+    results = []  # [(mode_name, has_account), ...]
     for mode_data in modes_to_create:
         name = mode_data["mode_of_payment"]
         existing = frappe.db.exists("Mode of Payment", name)
-        if existing:
-            print(f"  ✓ Mode of Payment already exists: {name}")
-            created_modes.append(name)
-            continue
 
+        # Try to find a suitable account
+        account = _find_payment_account(mode_data, company, abbr)
         accounts = []
-        if mode_data["account"]:
-            if frappe.db.exists("Account", mode_data["account"]):
-                accounts.append({
+        if account:
+            accounts.append({
+                "company": company,
+                "default_account": account,
+            })
+
+        if existing:
+            # Update existing mode with account if missing
+            mode_doc = frappe.get_doc("Mode of Payment", name)
+            has_account = any(
+                row.company == company for row in mode_doc.accounts
+            )
+            if not has_account and account:
+                mode_doc.append("accounts", {
                     "company": company,
-                    "default_account": mode_data["account"],
+                    "default_account": account,
                 })
+                mode_doc.save(ignore_permissions=True)
+                print(f"  ✓ Updated Mode of Payment: {name} → {account}")
             else:
-                print(f"  ⚠ Account '{mode_data['account']}' not found — will need manual setup")
+                status = f" (account: {account})" if account else " (no account — manual setup needed)"
+                print(f"  ✓ Mode of Payment already exists: {name}{status}")
+            results.append((name, bool(account or has_account)))
+            continue
 
         doc = frappe.get_doc({
             "doctype": "Mode of Payment",
@@ -156,10 +172,55 @@ def _create_payment_modes(company):
             "accounts": accounts,
         })
         doc.insert(ignore_permissions=True)
-        print(f"  ✓ Created Mode of Payment: {name}")
-        created_modes.append(name)
 
-    return created_modes
+        status = f" (account: {account})" if account else " (no account — manual setup needed)"
+        print(f"  ✓ Created Mode of Payment: {name}{status}")
+        results.append((name, bool(account)))
+
+    return results
+
+
+def _find_payment_account(mode_data, company, abbr):
+    """Find a suitable default account for a payment mode."""
+    name = mode_data["mode_of_payment"]
+    mode_type = mode_data["type"]
+
+    # 1. Try the explicit account hint first
+    hint = mode_data.get("account_hint")
+    if hint and frappe.db.exists("Account", hint):
+        return hint
+
+    # 2. For Bank-type (Card, UPI): find any active Bank account
+    if mode_type == "Bank":
+        bank_account = frappe.db.get_value(
+            "Account",
+            {"company": company, "account_type": "Bank", "is_group": 0, "disabled": 0},
+            "name",
+        )
+        if bank_account:
+            return bank_account
+
+        # Try by naming pattern for common setups
+        for try_name in [f"Bank - {abbr}", "Bank"]:
+            if frappe.db.exists("Account", try_name):
+                return try_name
+
+    # 3. For Cash-type (Wallet): find any Cash account
+    if mode_type == "Cash":
+        cash_account = frappe.db.get_value(
+            "Account",
+            {"company": company, "account_type": "Cash", "is_group": 0, "disabled": 0},
+            "name",
+        )
+        if cash_account:
+            return cash_account
+
+        # Try specific names
+        for try_name in [f"Cash - {abbr}", f"Cash in Hand - {abbr}"]:
+            if frappe.db.exists("Account", try_name):
+                return try_name
+
+    return None
 
 
 def _create_items(item_group):
@@ -217,13 +278,18 @@ def _create_items(item_group):
 
 
 def _create_pos_profile(company, warehouse, payment_modes):
-    """Create a POS Profile configured for the canteen."""
+    """Create a POS Profile configured for the canteen.
+
+    payment_modes: list of (mode_name, has_account) tuples
+    """
     profile_name = "Canteen POS"
 
     existing = frappe.db.exists("POS Profile", profile_name)
     if existing:
         print(f"  ✓ POS Profile already exists: {profile_name}")
         return
+
+    abbr = frappe.db.get_value("Company", company, "abbr")
 
     # Find default income account
     income_account = frappe.db.get_value(
@@ -240,21 +306,48 @@ def _create_pos_profile(company, warehouse, payment_modes):
     if not income_account:
         print("  ⚠ No income account found — POS Profile created but may need account setup")
 
-    # Find default cash account
-    abbr = frappe.db.get_value("Company", company, "abbr")
-    cash_account = frappe.db.get_value(
+    # Find expense account
+    expense_account = frappe.db.get_value(
         "Account",
-        {"company": company, "account_name": "Cash"},
+        {"company": company, "account_name": "Cost of Goods Sold"},
+        "name",
+    ) or frappe.db.get_value(
+        "Account",
+        {"company": company, "account_type": "Expense Account", "is_group": 0},
         "name",
     )
 
-    # Build payments table
+    # Find write-off account
+    write_off_account = frappe.db.get_value(
+        "Account",
+        {"company": company, "account_name": "Write Off"},
+        "name",
+    )
+
+    # Build payments table — only include modes with accounts configured
     payments = []
-    for i, mode in enumerate(payment_modes):
-        payments.append({
-            "mode_of_payment": mode,
-            "default": 1 if i == 0 else 0,
-        })
+    modes_without_accounts = []
+    for mode_name, has_account in payment_modes:
+        if has_account:
+            payments.append({
+                "mode_of_payment": mode_name,
+                "default": 1 if not payments else 0,
+            })
+        else:
+            modes_without_accounts.append(mode_name)
+
+    if modes_without_accounts:
+        print(f"  ⚠ Skipped modes in POS Profile (no default account):")
+        for m in modes_without_accounts:
+            print(f"     - {m}")
+        print(f"     → After creating accounts, edit the POS Profile and add them manually.")
+        print(f"       Go to: Point of Sale > Settings > POS Profile > Canteen POS")
+
+    if not payments:
+        print("  ❌ No payment modes with accounts available. POS Profile not created.")
+        print("     Please set up at least one Mode of Payment with a default account,")
+        print("     then re-run this script.")
+        return
 
     doc = frappe.get_doc({
         "doctype": "POS Profile",
@@ -263,13 +356,9 @@ def _create_pos_profile(company, warehouse, payment_modes):
         "warehouse": warehouse,
         "currency": frappe.db.get_single_value("Canteen Settings", "currency") or "INR",
         "income_account": income_account,
-        "expense_account": frappe.db.get_value(
-            "Account", {"company": company, "account_name": "Cost of Goods Sold"}, "name"
-        ),
-        "write_off_account": frappe.db.get_value(
-            "Account", {"company": company, "account_name": "Write Off"}, "name"
-        ),
+        "expense_account": expense_account,
+        "write_off_account": write_off_account,
         "payments": payments,
     })
     doc.insert(ignore_permissions=True)
-    print(f"  ✓ Created POS Profile: {profile_name}")
+    print(f"  ✓ Created POS Profile: {profile_name} (with {len(payments)} payment mode(s))")
