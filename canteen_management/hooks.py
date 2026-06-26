@@ -45,6 +45,11 @@ doc_events = {
             "canteen_management.pos_invoice_hooks.wallet_payment_on_cancel",
             "canteen_management.pos_invoice_hooks.stock_on_cancel",
         ],
+    },
+    "Employee": {
+        "validate": [
+            "canteen_management.employee_hooks.sync_wallet_on_save",
+        ],
     }
 }
 
