@@ -47,7 +47,7 @@ doc_events = {
         ],
     },
     "Employee": {
-        "validate": [
+        "on_update": [
             "canteen_management.employee_hooks.sync_wallet_on_save",
         ],
     }
