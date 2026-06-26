@@ -15,6 +15,11 @@ app_include_js = [
     "/assets/canteen_management/js/canteen.js"
 ]
 
+# Point of Sale specific JS (loaded in POS interface)
+pos_include_js = [
+    "/assets/canteen_management/js/pos_customization.js"
+]
+
 # Website include
 web_include_css = []
 web_include_js = []
