@@ -75,8 +75,7 @@
   "fieldtype": "Link",
   "options": "Employee",
   "insert_after": "customer",
-  "description": "Employee paying via wallet — required when payment mode is 'Wallet'",
-  "depends_on": "eval:doc.payments && doc.payments.some(p => p.mode_of_payment === 'Wallet')"
+  "description": "Employee paying via wallet — select an employee to see their wallet balance"
  },
  {
   "doctype": "Custom Field",
