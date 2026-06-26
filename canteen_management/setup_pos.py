@@ -289,8 +289,6 @@ def _create_pos_profile(company, warehouse, payment_modes):
         print(f"  ✓ POS Profile already exists: {profile_name}")
         return
 
-    abbr = frappe.db.get_value("Company", company, "abbr")
-
     # Find default income account
     income_account = frappe.db.get_value(
         "Account",
