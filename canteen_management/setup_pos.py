@@ -220,7 +220,7 @@ def _create_pos_profile(company, warehouse, payment_modes):
     """Create a POS Profile configured for the canteen."""
     profile_name = "Canteen POS"
 
-    existing = frappe.db.get_value("POS Profile", {"pos_profile_name": profile_name})
+    existing = frappe.db.exists("POS Profile", profile_name)
     if existing:
         print(f"  ✓ POS Profile already exists: {profile_name}")
         return
@@ -258,7 +258,7 @@ def _create_pos_profile(company, warehouse, payment_modes):
 
     doc = frappe.get_doc({
         "doctype": "POS Profile",
-        "pos_profile_name": profile_name,
+        "name": profile_name,
         "company": company,
         "warehouse": warehouse,
         "currency": frappe.db.get_single_value("Canteen Settings", "currency") or "INR",
