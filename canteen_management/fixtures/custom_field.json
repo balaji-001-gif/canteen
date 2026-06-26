@@ -146,4 +146,27 @@
   "read_only": 1,
   "description": "Reference to the originating Canteen Stock Entry"
  }
+,
+ {
+  "doctype": "Custom Field",
+  "name": "POS Opening Entry-canteen_shift_name",
+  "dt": "POS Opening Entry",
+  "fieldname": "canteen_shift_name",
+  "label": "Shift Name",
+  "fieldtype": "Select",
+  "options": "\nMorning\nAfternoon\nEvening\nGeneral",
+  "insert_after": "opening_time",
+  "in_list_view": 1,
+  "description": "Label this shift (Morning / Afternoon / Evening / General)"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "POS Opening Entry-canteen_notes",
+  "dt": "POS Opening Entry",
+  "fieldname": "canteen_notes",
+  "label": "Shift Notes",
+  "fieldtype": "Small Text",
+  "insert_after": "canteen_shift_name",
+  "description": "Cashier notes for this shift"
+ }
 ]
