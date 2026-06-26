@@ -97,7 +97,7 @@
       "label": "Canteen Employee Consumption"
     }
   ],
-  "content": "[{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Order Management\",\"col\":12}},{\"id\":\"cb-menu\",\"type\":\"card\",\"data\":{\"card_name\":\"Menu & Items\",\"col\":12}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory & Procurement\",\"col\":12}},{\"id\":\"cb-wallet\",\"type\":\"card\",\"data\":{\"card_name\":\"Wallet & Payments\",\"col\":12}},{\"id\":\"cb-staff\",\"type\":\"card\",\"data\":{\"card_name\":\"Staff & Shifts\",\"col\":12}},{\"id\":\"cb-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":12}},{\"id\":\"cb-reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports & Analytics\",\"col\":12}}]",
+  "content": "[{\"id\":\"cb-orders\",\"type\":\"card\",\"data\":{\"card_name\":\"Order Management\",\"col\":12}},{\"id\":\"cb-menu\",\"type\":\"card\",\"data\":{\"card_name\":\"Menu & Items\",\"col\":12}},{\"id\":\"cb-inventory\",\"type\":\"card\",\"data\":{\"card_name\":\"Inventory & Procurement\",\"col\":12}},{\"id\":\"cb-wallet\",\"type\":\"card\",\"data\":{\"card_name\":\"Wallet & Payments\",\"col\":12}},{\"id\":\"cb-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":12}},{\"id\":\"cb-reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports & Analytics\",\"col\":12}}]",
   "links": [
     {
       "hidden": 0,
@@ -247,24 +247,6 @@
     {
       "hidden": 0,
       "idx": 17,
-      "label": "Staff & Shifts",
-      "link_count": 0,
-      "onboard": 0,
-      "title": "Staff & Shifts",
-      "type": "Card Break"
-    },
-    {
-      "hidden": 0,
-      "idx": 18,
-      "label": "Canteen Shift",
-      "link_to": "Canteen Shift",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "idx": 19,
       "label": "Settings",
       "link_count": 0,
       "onboard": 0,

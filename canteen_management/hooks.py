@@ -74,9 +74,7 @@ scheduler_events = {
     "weekly": [
         "canteen_management.tasks.weekly_report",
     ],
-    "hourly": [
-        "canteen_management.tasks.check_shift_alerts",
-    ]
+    "hourly": []
 }
 
 # Roles

@@ -41,15 +41,8 @@ def get_dashboard_data():
         WHERE current_quantity <= minimum_quantity
     """, as_dict=True)[0].cnt
 
-    active_shift = frappe.db.get_value(
-        "Canteen Shift",
-        {"status": "Active", "cashier": frappe.session.user},
-        "name"
-    )
-
     return {
         "today_sales": today_sales.total,
         "today_orders": today_sales.orders,
         "low_stock_items": low_stock,
-        "active_shift": active_shift
     }

@@ -341,12 +341,13 @@ On submit, `update_inventory()` applies the change per the table above and stamp
 
 ## Transaction: Cashier Shift
 
-### Step-by-step
+Use **ERPNext's built-in POS Opening Entry / POS Closing Entry** for shift management.
 
-1. **Open shift:** `open_shift(opening_amount, cashier)` — a cashier can only have **one Active shift at a time**; opening a second throws.
-2. Take orders as normal during the shift — each submitted order auto-links to the cashier's active shift via `set_active_shift()`.
-3. **Close shift:** `close_shift(shift_name, closing_amount)`. On save, `calculate_totals()` sums every submitted order on that shift and splits totals into `cash_sales`, `card_sales`, `upi_sales`, `wallet_sales`, `credit_sales`.
-4. An hourly scheduled job (`check_shift_alerts`) flags any shift that's been **Active for over 12 hours** via a realtime event to that cashier — there's no email/SMS for this, only an in-session push.
+The app adds custom fields to POS Opening Entry:
+- **Shift Name** (Morning / Afternoon / Evening / General)
+- **Shift Notes** (cashier notes)
+
+See [Configure ERPNext Standard POS](#configure-erpnext-standard-pos-recommended) for setup.
 
 ---
 
@@ -471,7 +472,7 @@ This app sends a **small, fixed set of emails** — there is no customer-facing 
 | **Canteen Stock Entry Item** | Child | Stock entry line items |
 | **Canteen Employee Wallet** | Balance | Per-employee prepaid balance |
 | **Canteen Wallet Transaction** | Ledger | Credit/debit audit trail |
-| **Canteen Shift** | Document | Cashier shift open/close + sales split |
+
 | **Canteen Table** | Master | Dine-in tables and status |
 | **Canteen Supplier** | Master | Stock suppliers |
 | **Canteen Payment Mode** | Master | Enabled payment modes |

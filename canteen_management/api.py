@@ -8,7 +8,7 @@ or via /api/method/canteen_management.api.*
 """
 
 import frappe
-from frappe.utils import flt, today, nowtime, now
+from frappe.utils import flt, today, nowtime
 
 
 # =============================================================================
@@ -24,7 +24,6 @@ def pos_data():
         "categories": _get_categories(),
         "items": get_items(),
         "tables": _get_tables() if settings.get("enable_table_management") else [],
-        "active_shift": _get_active_shift(),
         "payment_modes": _get_payment_modes(),
         "dashboard_stats": _get_dashboard_stats(),
     }
@@ -122,7 +121,7 @@ def _get_categories():
 @frappe.whitelist()
 def create_order(items, order_type="Dine In", payment_mode="Cash",
                  paid_amount=None, employee=None, customer_name=None,
-                 table_no=None, shift=None, discount_amount=0,
+                 table_no=None, discount_amount=0,
                  special_instructions=None):
     """Create and submit a new canteen order via POS.
 
@@ -134,7 +133,6 @@ def create_order(items, order_type="Dine In", payment_mode="Cash",
         employee: Employee link (for wallet payments)
         customer_name: Customer name
         table_no: Table link (for dine-in)
-        shift: Shift link
         discount_amount: Discount on total
         special_instructions: Notes for kitchen
     """
@@ -150,8 +148,6 @@ def create_order(items, order_type="Dine In", payment_mode="Cash",
         doc.employee_name = frappe.db.get_value("Employee", employee, "employee_name")
     if table_no:
         doc.table_no = table_no
-    if shift:
-        doc.shift = shift
     if special_instructions:
         doc.special_instructions = special_instructions
 
@@ -220,7 +216,6 @@ def _serialize_order(doc):
         "customer_name": doc.customer_name,
         "table_no": doc.table_no,
         "cashier": doc.cashier,
-        "shift": doc.shift,
         "items": items,
         "subtotal": doc.subtotal,
         "tax_amount": doc.tax_amount,
@@ -239,7 +234,7 @@ def _serialize_order(doc):
 def list_orders(filters=None, limit=50, offset=0):
     """List orders with optional filters.
 
-    Filters can include: order_date, status, order_type, cashier, employee, shift.
+    Filters can include: order_date, status, order_type, cashier, employee.
     """
     f = {"docstatus": ["!=", 2]}
     if filters:
@@ -253,16 +248,13 @@ def list_orders(filters=None, limit=50, offset=0):
             f["cashier"] = filters["cashier"]
         if filters.get("employee"):
             f["employee"] = filters["employee"]
-        if filters.get("shift"):
-            f["shift"] = filters["shift"]
-
     orders = frappe.get_all(
         "Canteen Order",
         filters=f,
         fields=[
             "name", "order_date", "order_time", "status", "order_type",
             "customer_name", "table_no", "cashier", "employee_name",
-            "total_amount", "payment_mode", "shift", "docstatus",
+            "total_amount", "payment_mode", "docstatus",
         ],
         order_by="creation desc",
         limit=limit,
@@ -338,7 +330,6 @@ def get_invoice(invoice_name):
         "employee_name": doc.employee_name,
         "customer_name": doc.customer_name,
         "cashier": doc.cashier,
-        "shift": doc.shift,
         "items": items,
         "subtotal": doc.subtotal,
         "tax_amount": doc.tax_amount,
@@ -619,98 +610,6 @@ def list_wallets(filters=None):
 
 
 # =============================================================================
-# Shifts
-# =============================================================================
-
-@frappe.whitelist()
-def open_shift(shift_name=None, opening_amount=0, cashier=None):
-    """Open a new shift for the cashier."""
-    if not cashier:
-        cashier = frappe.session.user
-
-    active = frappe.db.exists("Canteen Shift", {"status": "Active", "cashier": cashier})
-    if active:
-        frappe.throw(f"Cashier already has an active shift: {active}")
-
-    doc = frappe.new_doc("Canteen Shift")
-    doc.shift_name = shift_name or f"Shift-{today()}-{cashier}"
-    doc.cashier = cashier
-    doc.opening_amount = flt(opening_amount)
-    doc.start_time = nowtime()
-    doc.status = "Active"
-    doc.insert(ignore_permissions=True)
-
-    return {"status": "success", "shift": doc.name, "shift_name": doc.shift_name}
-
-
-@frappe.whitelist()
-def close_shift(shift_name, closing_amount=0):
-    """Close an active shift and calculate totals."""
-    doc = frappe.get_doc("Canteen Shift", shift_name)
-    if doc.status != "Active":
-        frappe.throw("Shift is not active")
-
-    doc.status = "Closed"
-    doc.closed_at = now()
-    doc.closing_amount = flt(closing_amount)
-    doc.calculate_totals()
-    doc.save(ignore_permissions=True)
-
-    return {
-        "status": "success",
-        "shift": doc.name,
-        "total_sales": doc.total_sales,
-        "total_orders": doc.total_orders,
-        "closing_amount": doc.closing_amount,
-    }
-
-
-@frappe.whitelist()
-def get_active_shift(cashier=None):
-    """Get the active shift for a cashier."""
-    return _get_active_shift(cashier)
-
-
-def _get_active_shift(cashier=None):
-    if not cashier:
-        cashier = frappe.session.user
-    shift = frappe.db.get_value(
-        "Canteen Shift",
-        {"status": "Active", "cashier": cashier},
-        ["name", "shift_name", "start_time", "opening_amount", "opened_at", "cashier"],
-        as_dict=True,
-    )
-    if shift:
-        shift["order_count"] = frappe.db.count("Canteen Order",
-            {"shift": shift.name, "docstatus": 1}
-        )
-    return shift
-
-
-@frappe.whitelist()
-def list_shifts(filters=None, limit=50, offset=0):
-    """List shifts."""
-    f = {}
-    if filters:
-        if filters.get("status"):
-            f["status"] = filters["status"]
-        if filters.get("cashier"):
-            f["cashier"] = filters["cashier"]
-
-    shifts = frappe.get_all(
-        "Canteen Shift",
-        filters=f,
-        fields=["name", "shift_name", "status", "cashier", "start_time", "end_time",
-                "opening_amount", "closing_amount", "total_sales", "total_orders",
-                "opened_at", "closed_at"],
-        order_by="creation desc",
-        limit=limit,
-        start=offset,
-    )
-    return shifts
-
-
-# =============================================================================
 # Tables
 # =============================================================================
 
@@ -836,8 +735,6 @@ def _get_dashboard_stats():
     )
     today_sales = sum(flt(o.total_amount) for o in today_sales_data)
 
-    active_shifts = frappe.db.count("Canteen Shift", {"status": "Active"})
-
     low_stock_count = frappe.db.count("Canteen Inventory",
         filters=[["current_quantity", "<=", "minimum_quantity"]]
     )
@@ -845,7 +742,6 @@ def _get_dashboard_stats():
     return {
         "today_orders": today_orders,
         "today_sales": today_sales,
-        "active_shifts": active_shifts,
         "low_stock_items": low_stock_count,
         "currency": frappe.db.get_single_value("Canteen Settings", "currency") or "INR",
     }

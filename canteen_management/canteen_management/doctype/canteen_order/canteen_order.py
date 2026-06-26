@@ -8,7 +8,6 @@ class CanteenOrder(Document):
         self.cashier = frappe.session.user
         self.order_date = today()
         self.order_time = nowtime()
-        self.set_active_shift()
 
     def validate(self):
         self.validate_items()
@@ -55,15 +54,6 @@ class CanteenOrder(Document):
             self.change_amount = flt(self.paid_amount) - flt(self.total_amount)
             if self.change_amount < 0:
                 frappe.throw("Paid amount is less than total amount")
-
-    def set_active_shift(self):
-        active_shift = frappe.db.get_value(
-            "Canteen Shift",
-            {"status": "Active", "cashier": frappe.session.user},
-            "name"
-        )
-        if active_shift:
-            self.shift = active_shift
 
     def on_submit(self):
         self.update_inventory()
@@ -150,7 +140,6 @@ class CanteenOrder(Document):
         invoice.customer_name = self.customer_name or self.employee_name
         invoice.payment_mode = self.payment_mode
         invoice.cashier = self.cashier
-        invoice.shift = self.shift
         invoice.subtotal = self.subtotal
         invoice.tax_amount = self.tax_amount
         invoice.discount_amount = self.discount_amount
