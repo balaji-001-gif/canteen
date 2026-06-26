@@ -13,6 +13,7 @@ class CanteenPOS {
         this.page = page;
         this.$body = page.$body;
         this.cart = [];
+        this.all_items = [];
         this.selected_category = null;
         this.settings = {};
         this.payment_modes = [];
@@ -58,10 +59,10 @@ class CanteenPOS {
             me.filter_items(me.$body.find("#item-search").val());
         });
 
-        // Item grid click (delegated) — lookup by item_code, not index
+        // Item grid click (delegated) — lookup by item_code
         this.$body.on("click", ".item-card:not(.no-results)", function () {
             var itemCode = $(this).data("item");
-            if (itemCode) {
+            if (itemCode && me.all_items && me.all_items.length) {
                 var item = me.all_items.find(function (i) {
                     return i.item_code === itemCode;
                 });
