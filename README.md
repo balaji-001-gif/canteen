@@ -1,7 +1,7 @@
 # Canteen Management
 
 > **POS billing, inventory, and employee wallet tracking for ERPNext.**
-> One cashier terminal handles dine-in, take-away, delivery, and bulk orders — with stock deducted, invoices generated, and wallets settled automatically on submit.
+> This app provides the backend data and reports (items, inventory, wallets, shifts) that feed into **ERPNext's built-in POS system** — no custom POS page needed.
 
 ---
 
@@ -9,18 +9,19 @@
 
 1. [Who This App Is For](#who-this-app-is-for)
 2. [Start Here: Installation for IT Team](#start-here-installation-for-it-team)
-3. [Pre-Go-Live Checklist (Canteen Manager)](#pre-go-live-checklist-canteen-manager)
-4. [Go-Live Day: Opening Stock & Wallets](#go-live-day-opening-stock--wallets)
-5. [Transaction: Take an Order (POS)](#transaction-take-an-order-pos)
-6. [Transaction: Receive Stock](#transaction-receive-stock)
-7. [Transaction: Cashier Shift](#transaction-cashier-shift)
-8. [Reports & Monitoring](#reports--monitoring)
-9. [Notifications & Alerts](#notifications--alerts)
-10. [Troubleshooting Guide](#troubleshooting-guide)
-11. [Role & Permission Matrix](#role--permission-matrix)
-12. [Technical Architecture (For IT Reference)](#technical-architecture-for-it-reference)
-13. [Development Guide (For IT)](#development-guide-for-it)
-14. [Known Gaps](#known-gaps)
+3. [Configure ERPNext Standard POS (Recommended)](#configure-erpnext-standard-pos-recommended)
+4. [Pre-Go-Live Checklist (Canteen Manager)](#pre-go-live-checklist-canteen-manager)
+5. [Go-Live Day: Opening Stock & Wallets](#go-live-day-opening-stock--wallets)
+6. [Transaction: Take an Order (POS)](#transaction-take-an-order-pos)
+7. [Transaction: Receive Stock](#transaction-receive-stock)
+8. [Transaction: Cashier Shift](#transaction-cashier-shift)
+9. [Reports & Monitoring](#reports--monitoring)
+10. [Notifications & Alerts](#notifications--alerts)
+11. [Troubleshooting Guide](#troubleshooting-guide)
+12. [Role & Permission Matrix](#role--permission-matrix)
+13. [Technical Architecture (For IT Reference)](#technical-architecture-for-it-reference)
+14. [Development Guide (For IT)](#development-guide-for-it)
+15. [Known Gaps](#known-gaps)
 
 ---
 
@@ -73,7 +74,80 @@ frappe.db.exists("Canteen Table", "T01")                   # → True (created b
 | **Frappe Desk > User > [Manager's User]** | Add role **Canteen Manager**, save |
 | **Frappe Desk > User > [Employee with wallet]** | Add role **Canteen User**, save |
 
-> Cashiers need normal Desk access — the POS is a Desk **page** (`/app/canteen-pos`), not a standalone web app. There is no separate lightweight terminal UI; whoever runs the POS logs into full Frappe Desk.
+> Cashiers need normal Desk access. They'll use ERPNext's built-in POS interface at **Point of Sale > POS**, not a custom page.
+
+---
+
+## Configure ERPNext Standard POS (Recommended)
+
+This app works best when paired with **ERPNext's built-in POS system** — no custom POS page needed. Run the setup script to automatically create standard Items, Payment Modes, and a POS Profile from your existing Canteen Items.
+
+### Automated setup
+
+After installing the app and running `bench migrate`, run:
+
+```bash
+bench --site your-site execute canteen_management.setup_pos.run
+```
+
+This will:
+1. Create Modes of Payment: **Cash**, **Card**, **UPI**
+2. Create a **Canteen** Warehouse
+3. Create a **Canteen** Item Group
+4. Sync all active **Canteen Items** → standard ERPNext **Items** with **Item Prices**
+5. Create a **Canteen POS** POS Profile with all payment modes
+
+### Manual configuration (if you prefer to do it step-by-step)
+
+#### 1. Create Modes of Payment
+
+Go to **Accounting > Settings > Mode of Payment** and create:
+
+| Mode of Payment | Type | Default Account |
+|---|---|---|
+| Cash | Cash | Cash - [Company Abbr] |
+| Card | Bank | (leave blank, set later) |
+| UPI | Bank | (leave blank, set later) |
+
+#### 2. Create a Warehouse
+
+Go to **Stock > Settings > Warehouse** and create:
+- Warehouse Name: `Canteen`
+- Company: your company
+- Parent Warehouse: `Stores`
+
+#### 3. Create Items from Canteen Items
+
+For each item in **Canteen Item**, create a matching **Item** (`Stock > Items > Item`):
+- Item Code, Item Name → from Canteen Item
+- Item Group → `Canteen` (create it if it doesn't exist)
+- Stock UOM → Nos (or as appropriate)
+- Enable `Maintain Stock`
+
+Then set Item Price for each item under **Selling > Standard Selling**.
+
+#### 4. Create a POS Profile
+
+Go to **Point of Sale > Settings > POS Profile > New**:
+
+| Field | Value |
+|---|---|
+| Name | Canteen POS |
+| Company | Your company |
+| Warehouse | Canteen |
+| Currency | INR |
+| **Payments** | Add Cash, Card, UPI |
+
+Set the Income Account and Expense Account under the **Accounting** section.
+
+### Using the POS
+
+1. **Create an Opening Entry**: `Point of Sale > POS > New Opening Entry`
+2. Select **Canteen POS** profile, enter opening cash amount, submit
+3. Open the POS: `Point of Sale > POS`
+4. Start ringing up orders
+
+> The canteen's custom features (Employee Wallet, Kitchen Order Status, Table Management) are still available through the app's API and custom doctypes. See [API Endpoints](#api-endpoints-selected) for integration points.
 
 ---
 
@@ -110,6 +184,8 @@ For each item, go to **Canteen Item > + Add New** and set:
 
 > Saving an item does **not** automatically create its `Canteen Inventory` record — confirm this manually before go-live, because `Canteen Stock Entry` will hard-throw ("No inventory record found...") if the item has no inventory row yet.
 
+Then run `bench --site your-site execute canteen_management.setup_pos.run` to sync them to standard ERPNext Items for use in the POS.
+
 ### □ 4. Set Minimum Stock Levels
 
 On each **Canteen Inventory** record (or the item's `min_stock_level`), set the threshold that triggers low-stock alerts and blocks orders that would oversell.
@@ -117,6 +193,8 @@ On each **Canteen Inventory** record (or the item's `min_stock_level`), set the 
 ### □ 5. Configure Payment Modes
 
 Go to **Canteen Payment Mode** and create rows for each mode you accept (Cash, Card, UPI, Wallet, Credit), marking one `is_default`.
+
+Also configure the corresponding **Mode of Payment** in ERPNext (see [Configure ERPNext Standard POS](#configure-erpnext-standard-pos-recommended)).
 
 ### □ 6. Set up Tables (if dine-in)
 
