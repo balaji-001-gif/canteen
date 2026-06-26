@@ -783,7 +783,12 @@
     <div class="pos-right">
       <div class="cart-header">
         <h4>Current Order <span class="cart-count" id="cart-count" style="display:none;">0</span></h4>
-        <input type="text" id="customer-name" placeholder="Customer name (optional)">
+        <div style="display:flex; gap:8px; flex-direction:column;">
+          <input type="text" id="customer-name" placeholder="Customer name (optional)">
+          <div class="employee-row" style="display:none;">
+            <input type="text" id="employee-field" class="form-control" placeholder="Employee ID (required for Wallet)">
+          </div>
+        </div>
       </div>
 
       <div id="cart-items" class="cart-items-list">
