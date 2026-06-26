@@ -46,7 +46,7 @@ def get_data(filters):
             END) AS wallet_amount
         FROM `tabPOS Invoice` pi
         LEFT JOIN `tabEmployee` e ON e.name = pi.canteen_employee
-        LEFT JOIN `tabPOS Invoice Payments` pm ON pm.parent = pi.name
+        LEFT JOIN `tabSales Invoice Payment` pm ON pm.parent = pi.name
         WHERE {conditions}
         GROUP BY pi.canteen_employee
         ORDER BY total_amount DESC

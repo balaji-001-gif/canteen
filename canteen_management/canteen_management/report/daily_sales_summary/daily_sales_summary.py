@@ -44,7 +44,7 @@ def get_data(filters):
             SUM(pi.total_taxes_and_charges) AS total_tax,
             SUM(pi.discount_amount) AS total_discount
         FROM `tabPOS Invoice` pi
-        LEFT JOIN `tabPOS Invoice Payments` pm ON pm.parent = pi.name
+        LEFT JOIN `tabSales Invoice Payment` pm ON pm.parent = pi.name
         WHERE {conditions}
         GROUP BY pi.posting_date
         ORDER BY pi.posting_date DESC

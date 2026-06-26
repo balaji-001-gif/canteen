@@ -402,7 +402,7 @@ def get_sales_overview(days=7):
             pm.mode_of_payment AS payment_mode,
             COUNT(*) as count,
             SUM(pm.amount) as total
-        FROM `tabPOS Invoice Payments` pm
+        FROM `tabSales Invoice Payment` pm
         JOIN `tabPOS Invoice` pi ON pi.name = pm.parent
         WHERE pi.posting_date BETWEEN %(start)s AND %(end)s
             AND pi.docstatus = 1

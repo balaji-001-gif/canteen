@@ -48,7 +48,7 @@ def get_data(filters):
             pi.discount_amount,
             pi.grand_total,
             (SELECT GROUP_CONCAT(mode_of_payment SEPARATOR ', ') 
-             FROM `tabPOS Invoice Payments` WHERE parent = pi.name) AS payment_modes,
+             FROM `tabSales Invoice Payment` WHERE parent = pi.name) AS payment_modes,
             CASE 
                 WHEN pi.docstatus = 0 THEN 'Draft'
                 WHEN pi.docstatus = 1 THEN 'Submitted'
