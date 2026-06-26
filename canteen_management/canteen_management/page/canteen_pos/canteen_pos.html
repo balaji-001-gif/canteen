@@ -368,7 +368,6 @@
     gap: 10px;
     padding: 40px 20px;
   }
-  .cart-empty i { font-size: 36px; opacity: 0.3; }
   .cart-empty p { font-size: 13px; text-align: center; line-height: 1.5; }
 
   .cart-item {
@@ -762,15 +761,12 @@
   }
 </style>
 
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <div id="canteen-pos-root">
   <div class="pos-layout">
     <!-- Left: Item Panel -->
     <div class="pos-left">
       <div class="pos-search-bar">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <i class="search-icon">🔍</i>
         <input type="text" id="item-search" placeholder="Search items by name or barcode..." autocomplete="off">
       </div>
       <div id="category-list" class="category-bar"></div>
@@ -793,7 +789,6 @@
 
       <div id="cart-items" class="cart-items-list">
         <div class="cart-empty">
-          <i class="fa-solid fa-basket-shopping"></i>
           <p>No items yet.<br>Tap an item to add it to the order.</p>
         </div>
       </div>
@@ -817,8 +812,8 @@
       </div>
 
       <div class="cart-actions">
-        <button id="btn-clear" class="btn btn-clear"><i class="fa-solid fa-trash-can"></i> Clear</button>
-        <button id="btn-pay" class="btn btn-pay" disabled><i class="fa-solid fa-check"></i> Place Order</button>
+        <button id="btn-clear" class="btn btn-clear">🗑️ Clear</button>
+        <button id="btn-pay" class="btn btn-pay" disabled>✓ Place Order</button>
       </div>
     </div>
   </div>
@@ -832,7 +827,7 @@
   <div class="pos-modal-box">
     <div class="pos-modal-header">
       <h3>Receipt</h3>
-      <button class="pos-modal-close" id="receipt-close"><i class="fa-solid fa-xmark"></i></button>
+      <button class="pos-modal-close" id="receipt-close">✕</button>
     </div>
     <div class="receipt-body" id="receipt-body"></div>
     <div class="receipt-footer">Thank you for your visit!</div>
@@ -845,9 +840,9 @@
     <div class="qty-modal-content">
       <div class="item-label" id="qty-item-label"></div>
       <div class="qty-controls">
-        <button class="qty-big-btn" id="qty-minus"><i class="fa-solid fa-minus"></i></button>
+        <button class="qty-big-btn" id="qty-minus">−</button>
         <div class="qty-display" id="qty-display">1</div>
-        <button class="qty-big-btn" id="qty-plus"><i class="fa-solid fa-plus"></i></button>
+        <button class="qty-big-btn" id="qty-plus">+</button>
       </div>
       <button class="qty-confirm-btn" id="qty-confirm">Add to Order</button>
     </div>

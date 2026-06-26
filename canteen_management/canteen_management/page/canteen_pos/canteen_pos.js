@@ -318,7 +318,6 @@ class CanteenPOS {
         if (this.cart.length === 0) {
             container.append(
                 '<div class="cart-empty">' +
-                    '<i class="fa-solid fa-basket-shopping"></i>' +
                     "<p>No items yet.<br>Tap an item to add it to the order.</p>" +
                     "</div>"
             );
@@ -512,16 +511,13 @@ class CanteenPOS {
     show_toast(message, type) {
         type = type || "info";
         var container = this.$body.find("#pos-toast-container");
+        var icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
         var toast = $(
             '<div class="pos-toast ' +
                 type +
-                '"><i class="fa-solid fa-' +
-                (type === "success"
-                    ? "check-circle"
-                    : type === "error"
-                    ? "exclamation-circle"
-                    : "info-circle") +
-                '"></i> ' +
+                '"><span class="toast-icon">' +
+                icon +
+                "</span> " +
                 frappe.utils.escape_html(message) +
                 "</div>"
         );
