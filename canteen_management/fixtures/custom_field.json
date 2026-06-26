@@ -46,51 +46,6 @@
  },
  {
   "doctype": "Custom Field",
-  "name": "Canteen Order-kitchen_display",
-  "dt": "Canteen Order",
-  "fieldname": "kitchen_display",
-  "label": "Show in Kitchen Display",
-  "fieldtype": "Check",
-  "insert_after": "kitchen_notes",
-  "default": "1",
-  "description": "Flag this order for the kitchen display screen"
- },
- {
-  "doctype": "Custom Field",
-  "name": "Canteen Order-estimated_ready_time",
-  "dt": "Canteen Order",
-  "fieldname": "estimated_ready_time",
-  "label": "Estimated Ready Time",
-  "fieldtype": "Time",
-  "insert_after": "kitchen_display",
-  "read_only": 1,
-  "description": "Estimated time when the order will be ready"
- },
- {
-  "doctype": "Custom Field",
-  "name": "Canteen Order-bill_print_count",
-  "dt": "Canteen Order",
-  "fieldname": "bill_print_count",
-  "label": "Bill Print Count",
-  "fieldtype": "Int",
-  "insert_after": "estimated_ready_time",
-  "default": "0",
-  "read_only": 1,
-  "description": "Number of times the bill has been printed"
- },
- {
-  "doctype": "Custom Field",
-  "name": "Canteen Invoice-printed",
-  "dt": "Canteen Invoice",
-  "fieldname": "printed",
-  "label": "Printed",
-  "fieldtype": "Check",
-  "insert_after": "change_amount",
-  "default": "0",
-  "description": "Indicates if the invoice has been printed"
- },
- {
-  "doctype": "Custom Field",
   "name": "User-canteen_role",
   "dt": "User",
   "fieldname": "canteen_role",
@@ -135,18 +90,7 @@
   "description": "Employee's current wallet balance (shown for reference)",
   "depends_on": "eval:doc.canteen_employee"
  },
- {
-  "doctype": "Custom Field",
-  "name": "Stock Entry-canteen_stock_entry_ref",
-  "dt": "Stock Entry",
-  "fieldname": "canteen_stock_entry_ref",
-  "label": "Canteen Stock Entry Reference",
-  "fieldtype": "Data",
-  "insert_after": "remarks",
-  "read_only": 1,
-  "description": "Reference to the originating Canteen Stock Entry"
- }
-,
+
  {
   "doctype": "Custom Field",
   "name": "POS Opening Entry-canteen_shift_name",

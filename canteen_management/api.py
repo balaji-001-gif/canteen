@@ -2,40 +2,21 @@
 """
 Canteen Management REST API
 
-Comprehensive REST API endpoints for the Canteen POS system.
-All endpoints are callable via frappe.call() from the client side
-or via /api/method/canteen_management.api.*
+Endpoints for wallet, inventory, tables, settings, and dashboard.
+All sales/order data comes from ERPNext POS Invoice.
 """
 
 import frappe
-from frappe.utils import flt, today, nowtime
+from frappe.utils import flt, today
 
 
 # =============================================================================
-# POS Data  single endpoint to hydrate the POS interface
-# =============================================================================
-
-@frappe.whitelist()
-def pos_data():
-    """Return all data needed to bootstrap the POS in one call."""
-    settings = _get_settings_dict()
-    return {
-        "settings": settings,
-        "categories": _get_categories(),
-        "items": get_items(),
-        "tables": _get_tables() if settings.get("enable_table_management") else [],
-        "payment_modes": _get_payment_modes(),
-        "dashboard_stats": _get_dashboard_stats(),
-    }
-
-
-# =============================================================================
-# Items
+# Items (Canteen Item — menu management)
 # =============================================================================
 
 @frappe.whitelist()
 def get_items(search_term=None, category=None, include_inactive=False):
-    """Get menu items for POS with optional search and category filter."""
+    """Get canteen menu items with optional search and category filter."""
     filters = {}
     if not include_inactive:
         filters["is_active"] = 1
@@ -69,7 +50,7 @@ def get_items(search_term=None, category=None, include_inactive=False):
 
 @frappe.whitelist()
 def get_item_detail(item_code):
-    """Get full details of a single item including stock."""
+    """Get full details of a single canteen item including stock."""
     item = frappe.get_doc("Canteen Item", item_code)
     inventory = frappe.db.get_value(
         "Canteen Inventory",
@@ -102,10 +83,6 @@ def get_item_detail(item_code):
 @frappe.whitelist()
 def get_categories():
     """Get all active categories."""
-    return _get_categories()
-
-
-def _get_categories():
     return frappe.get_all(
         "Canteen Category",
         filters={"is_active": 1},
@@ -115,275 +92,7 @@ def _get_categories():
 
 
 # =============================================================================
-# Orders
-# =============================================================================
-
-@frappe.whitelist()
-def create_order(items, order_type="Dine In", payment_mode="Cash",
-                 paid_amount=None, employee=None, customer_name=None,
-                 table_no=None, discount_amount=0,
-                 special_instructions=None):
-    """Create and submit a new canteen order via POS.
-
-    Args:
-        items: List of dicts [{item, qty, rate, tax_rate?}]
-        order_type: Dine In / Take Away / Delivery / Bulk Order
-        payment_mode: Cash / Card / UPI / Wallet / Credit
-        paid_amount: Amount paid by customer
-        employee: Employee link (for wallet payments)
-        customer_name: Customer name
-        table_no: Table link (for dine-in)
-        discount_amount: Discount on total
-        special_instructions: Notes for kitchen
-    """
-    doc = frappe.new_doc("Canteen Order")
-    doc.order_type = order_type
-    doc.payment_mode = payment_mode
-    doc.discount_amount = flt(discount_amount)
-
-    if customer_name:
-        doc.customer_name = customer_name
-    if employee:
-        doc.employee = employee
-        doc.employee_name = frappe.db.get_value("Employee", employee, "employee_name")
-    if table_no:
-        doc.table_no = table_no
-    if special_instructions:
-        doc.special_instructions = special_instructions
-
-    for item_data in items:
-        row = doc.append("items", {})
-        row.item = item_data.get("item")
-        row.item_name = item_data.get("item_name") or frappe.db.get_value(
-            "Canteen Item", item_data["item"], "item_name"
-        )
-        row.quantity = flt(item_data.get("qty", 1))
-        row.rate = flt(item_data.get("rate", 0))
-        row.tax_rate = flt(item_data.get("tax_rate", 0))
-
-    doc.insert(ignore_permissions=True)
-
-    if paid_amount:
-        doc.paid_amount = flt(paid_amount)
-    doc.submit()
-
-    # Update table status to Occupied if dine-in
-    if table_no and order_type == "Dine In":
-        table_doc = frappe.get_doc("Canteen Table", table_no)
-        table_doc.status = "Occupied"
-        table_doc.save(ignore_permissions=True)
-
-    return {
-        "name": doc.name,
-        "status": doc.status,
-        "total_amount": doc.total_amount,
-        "subtotal": doc.subtotal,
-        "tax_amount": doc.tax_amount,
-        "change_amount": doc.change_amount,
-        "invoice": frappe.db.get_value("Canteen Invoice", {"order": doc.name}, "name"),
-    }
-
-
-@frappe.whitelist()
-def get_order(order_name):
-    """Get full order details."""
-    doc = frappe.get_doc("Canteen Order", order_name)
-    return _serialize_order(doc)
-
-
-def _serialize_order(doc):
-    items = []
-    for row in doc.items:
-        items.append({
-            "item": row.item,
-            "item_name": row.item_name,
-            "quantity": row.quantity,
-            "rate": row.rate,
-            "tax_rate": row.tax_rate,
-            "amount": row.amount,
-            "tax_amount": row.tax_amount,
-            "total_amount": row.total_amount,
-            "special_note": row.special_note,
-        })
-    return {
-        "name": doc.name,
-        "order_date": str(doc.order_date) if doc.order_date else None,
-        "order_time": str(doc.order_time) if doc.order_time else None,
-        "status": doc.status,
-        "order_type": doc.order_type,
-        "employee": doc.employee,
-        "employee_name": doc.employee_name,
-        "customer_name": doc.customer_name,
-        "table_no": doc.table_no,
-        "cashier": doc.cashier,
-        "items": items,
-        "subtotal": doc.subtotal,
-        "tax_amount": doc.tax_amount,
-        "discount_amount": doc.discount_amount,
-        "total_amount": doc.total_amount,
-        "payment_mode": doc.payment_mode,
-        "paid_amount": doc.paid_amount,
-        "change_amount": doc.change_amount,
-        "special_instructions": doc.special_instructions,
-        "docstatus": doc.docstatus,
-        "amended_from": doc.amended_from,
-    }
-
-
-@frappe.whitelist()
-def list_orders(filters=None, limit=50, offset=0):
-    """List orders with optional filters.
-
-    Filters can include: order_date, status, order_type, cashier, employee.
-    """
-    f = {"docstatus": ["!=", 2]}
-    if filters:
-        if filters.get("order_date"):
-            f["order_date"] = filters["order_date"]
-        if filters.get("status"):
-            f["status"] = filters["status"]
-        if filters.get("order_type"):
-            f["order_type"] = filters["order_type"]
-        if filters.get("cashier"):
-            f["cashier"] = filters["cashier"]
-        if filters.get("employee"):
-            f["employee"] = filters["employee"]
-    orders = frappe.get_all(
-        "Canteen Order",
-        filters=f,
-        fields=[
-            "name", "order_date", "order_time", "status", "order_type",
-            "customer_name", "table_no", "cashier", "employee_name",
-            "total_amount", "payment_mode", "docstatus",
-        ],
-        order_by="creation desc",
-        limit=limit,
-        start=offset,
-    )
-    return orders
-
-
-@frappe.whitelist()
-def update_order_status(order_name, status):
-    """Update order status (e.g. Pending -> Preparing -> Ready -> Served)."""
-    valid_statuses = ["Pending", "Preparing", "Ready", "Served", "Completed", "Cancelled"]
-    if status not in valid_statuses:
-        frappe.throw(f"Invalid status: {status}. Must be one of {', '.join(valid_statuses)}")
-
-    doc = frappe.get_doc("Canteen Order", order_name)
-    doc.status = status
-    doc.save(ignore_permissions=True)
-    return {"status": "success", "order": order_name, "new_status": status}
-
-
-@frappe.whitelist()
-def cancel_order(order_name):
-    """Cancel an order. Will also cancel the linked invoice."""
-    doc = frappe.get_doc("Canteen Order", order_name)
-    if doc.docstatus != 1:
-        frappe.throw("Only submitted orders can be cancelled")
-    doc.cancel()
-    return {"status": "success", "order": order_name, "message": "Order cancelled"}
-
-
-@frappe.whitelist()
-def get_today_orders():
-    """Get all orders for today (quick POS list)."""
-    orders = frappe.get_all(
-        "Canteen Order",
-        filters={"order_date": today(), "docstatus": ["!=", 2]},
-        fields=[
-            "name", "order_time", "status", "order_type", "customer_name",
-            "table_no", "total_amount", "payment_mode", "employee_name",
-        ],
-        order_by="creation desc",
-        limit=100,
-    )
-    return orders
-
-
-# =============================================================================
-# Invoices
-# =============================================================================
-
-@frappe.whitelist()
-def get_invoice(invoice_name):
-    """Get full invoice details."""
-    doc = frappe.get_doc("Canteen Invoice", invoice_name)
-    items = []
-    for row in doc.items:
-        items.append({
-            "item": row.item,
-            "item_name": row.item_name,
-            "quantity": row.quantity,
-            "rate": row.rate,
-            "amount": row.amount,
-            "tax_amount": row.tax_amount,
-            "total_amount": row.total_amount,
-        })
-    return {
-        "name": doc.name,
-        "order": doc.order,
-        "invoice_date": str(doc.invoice_date) if doc.invoice_date else None,
-        "status": doc.status,
-        "employee": doc.employee,
-        "employee_name": doc.employee_name,
-        "customer_name": doc.customer_name,
-        "cashier": doc.cashier,
-        "items": items,
-        "subtotal": doc.subtotal,
-        "tax_amount": doc.tax_amount,
-        "discount_amount": doc.discount_amount,
-        "total_amount": doc.total_amount,
-        "payment_mode": doc.payment_mode,
-        "paid_amount": doc.paid_amount,
-        "change_amount": doc.change_amount,
-        "docstatus": doc.docstatus,
-    }
-
-
-@frappe.whitelist()
-def get_invoice_print_html(invoice_name):
-    """Generate printable invoice HTML for thermal receipt printer."""
-    invoice = frappe.get_doc("Canteen Invoice", invoice_name)
-    settings = frappe.get_single("Canteen Settings")
-    html = frappe.render_template(
-        "canteen_management/templates/invoice.html",
-        {"invoice": invoice, "settings": settings},
-    )
-    return {"html": html, "name": invoice_name}
-
-
-@frappe.whitelist()
-def list_invoices(filters=None, limit=50, offset=0):
-    """List invoices with optional filters."""
-    f = {"docstatus": ["!=", 2]}
-    if filters:
-        if filters.get("invoice_date"):
-            f["invoice_date"] = filters["invoice_date"]
-        if filters.get("status"):
-            f["status"] = filters["status"]
-        if filters.get("cashier"):
-            f["cashier"] = filters["cashier"]
-        if filters.get("employee"):
-            f["employee"] = filters["employee"]
-
-    invoices = frappe.get_all(
-        "Canteen Invoice",
-        filters=f,
-        fields=[
-            "name", "order", "invoice_date", "status", "customer_name",
-            "total_amount", "payment_mode", "cashier", "docstatus",
-        ],
-        order_by="creation desc",
-        limit=limit,
-        start=offset,
-    )
-    return invoices
-
-
-# =============================================================================
-# Inventory / Stock
+# Inventory / Stock (Canteen Inventory — custom stock tracking)
 # =============================================================================
 
 @frappe.whitelist()
@@ -446,77 +155,13 @@ def get_stock_balance(item_code):
     return inv or {"current_quantity": 0, "minimum_quantity": 0}
 
 
-@frappe.whitelist()
-def create_stock_entry(stock_type, items, company=None, remarks=None):
-    """Create and submit a stock entry.
-
-    Args:
-        stock_type: Inward / Outward / Adjustment / Wastage
-        items: List of dicts [{item, qty, rate}]
-        company: Company link
-        remarks: Notes
-    """
-    doc = frappe.new_doc("Canteen Stock Entry")
-    doc.stock_type = stock_type
-    if company:
-        doc.company = company
-    if remarks:
-        doc.remarks = remarks
-
-    for item_data in items:
-        row = doc.append("items", {})
-        row.item = item_data["item"]
-        row.item_name = item_data.get("item_name") or frappe.db.get_value(
-            "Canteen Item", item_data["item"], "item_name"
-        )
-        row.quantity = flt(item_data.get("qty", 1))
-        row.rate = flt(item_data.get("rate", 0))
-
-    doc.insert(ignore_permissions=True)
-    doc.submit()
-
-    return {
-        "name": doc.name,
-        "status": "Submitted",
-        "stock_type": stock_type,
-        "total_quantity": doc.total_quantity,
-        "total_amount": doc.total_amount,
-    }
-
-
-@frappe.whitelist()
-def list_stock_entries(filters=None, limit=50, offset=0):
-    """List stock entries."""
-    f = {}
-    if filters:
-        if filters.get("stock_type"):
-            f["stock_type"] = filters["stock_type"]
-        if filters.get("posting_date"):
-            f["posting_date"] = filters["posting_date"]
-        if filters.get("status"):
-            f["status"] = filters["status"]
-
-    entries = frappe.get_all(
-        "Canteen Stock Entry",
-        filters=f,
-        fields=["name", "posting_date", "posting_time", "stock_type", "company",
-                "status", "total_quantity", "total_amount", "docstatus"],
-        order_by="creation desc",
-        limit=limit,
-        start=offset,
-    )
-    return entries
-
-
 # =============================================================================
 # Employee Wallet
 # =============================================================================
 
 @frappe.whitelist()
 def get_wallet_balance(employee=None):
-    """Get wallet balance for an employee.
-    If employee is omitted, gets wallet for the current user.
-    """
+    """Get wallet balance for an employee."""
     if not employee:
         user = frappe.session.user
         employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
@@ -616,15 +261,12 @@ def list_wallets(filters=None):
 @frappe.whitelist()
 def get_tables():
     """Get all tables."""
-    return _get_tables()
-
-
-def _get_tables():
-    return frappe.get_all(
+    tables = frappe.get_all(
         "Canteen Table",
         fields=["name", "table_name", "table_no", "capacity", "status", "location"],
         order_by="table_no asc",
     )
+    return tables
 
 
 @frappe.whitelist()
@@ -698,42 +340,29 @@ def _get_settings_dict():
     return settings
 
 
-def _get_payment_modes():
-    settings = frappe.get_single("Canteen Settings")
-    modes = []
-    for mode in settings.accepted_payment_modes:
-        if mode.is_active:
-            modes.append({
-                "mode": mode.payment_mode,
-                "label": mode.mode_label or mode.payment_mode,
-                "is_default": mode.is_default,
-            })
-    return modes
-
-
 # =============================================================================
-# Dashboard
+# Dashboard (powered by ERPNext POS Invoice)
 # =============================================================================
 
 @frappe.whitelist()
 def get_dashboard_stats():
-    """Get dashboard statistics."""
+    """Get dashboard statistics from POS Invoice."""
     return _get_dashboard_stats()
 
 
 def _get_dashboard_stats():
     today_str = today()
 
-    today_orders = frappe.db.count("Canteen Order", {
-        "order_date": today_str, "docstatus": 1
+    today_orders = frappe.db.count("POS Invoice", {
+        "posting_date": today_str, "docstatus": 1, "is_return": 0
     })
 
     today_sales_data = frappe.db.get_all(
-        "Canteen Order",
-        filters={"order_date": today_str, "docstatus": 1},
-        fields=["total_amount"],
+        "POS Invoice",
+        filters={"posting_date": today_str, "docstatus": 1, "is_return": 0},
+        fields=["grand_total"],
     )
-    today_sales = sum(flt(o.total_amount) for o in today_sales_data)
+    today_sales = sum(flt(o.grand_total) for o in today_sales_data)
 
     low_stock_count = frappe.db.count("Canteen Inventory",
         filters=[["current_quantity", "<=", "minimum_quantity"]]
@@ -749,72 +378,76 @@ def _get_dashboard_stats():
 
 @frappe.whitelist()
 def get_sales_overview(days=7):
-    """Get sales overview for the last N days."""
+    """Get sales overview for the last N days from POS Invoice."""
     from frappe.utils import add_days
     end_date = today()
     start_date = add_days(end_date, -days)
 
     orders = frappe.db.sql("""
         SELECT
-            DATE(order_date) as date,
+            DATE(posting_date) as date,
             COUNT(*) as order_count,
-            SUM(total_amount) as total_sales,
-            AVG(total_amount) as avg_order
-        FROM `tabCanteen Order`
-        WHERE order_date BETWEEN %(start)s AND %(end)s
+            SUM(grand_total) as total_sales,
+            AVG(grand_total) as avg_order
+        FROM `tabPOS Invoice`
+        WHERE posting_date BETWEEN %(start)s AND %(end)s
             AND docstatus = 1
-        GROUP BY DATE(order_date)
+            AND is_return = 0
+        GROUP BY DATE(posting_date)
         ORDER BY date ASC
     """, {"start": start_date, "end": end_date}, as_dict=True)
 
     payment_breakdown = frappe.db.sql("""
         SELECT
-            payment_mode,
+            pm.mode_of_payment AS payment_mode,
             COUNT(*) as count,
-            SUM(total_amount) as total
-        FROM `tabCanteen Order`
-        WHERE order_date BETWEEN %(start)s AND %(end)s
-            AND docstatus = 1
-        GROUP BY payment_mode
-    """, {"start": start_date, "end": end_date}, as_dict=True)
-
-    type_breakdown = frappe.db.sql("""
-        SELECT
-            order_type,
-            COUNT(*) as count,
-            SUM(total_amount) as total
-        FROM `tabCanteen Order`
-        WHERE order_date BETWEEN %(start)s AND %(end)s
-            AND docstatus = 1
-        GROUP BY order_type
+            SUM(pm.amount) as total
+        FROM `tabPOS Invoice Payments` pm
+        JOIN `tabPOS Invoice` pi ON pi.name = pm.parent
+        WHERE pi.posting_date BETWEEN %(start)s AND %(end)s
+            AND pi.docstatus = 1
+            AND pi.is_return = 0
+        GROUP BY pm.mode_of_payment
     """, {"start": start_date, "end": end_date}, as_dict=True)
 
     return {
         "period": {"start": start_date, "end": end_date, "days": days},
         "daily_breakdown": orders,
         "by_payment_mode": payment_breakdown,
-        "by_order_type": type_breakdown,
     }
 
 
 @frappe.whitelist()
 def get_top_items(days=7, limit=10):
-    """Get top-selling items."""
+    """Get top-selling items from POS Invoice."""
     from frappe.utils import add_days
     start_date = add_days(today(), -days)
 
     items = frappe.db.sql("""
         SELECT
-            oi.item,
-            oi.item_name,
-            SUM(oi.quantity) as total_qty,
-            SUM(oi.total_amount) as total_amount
-        FROM `tabCanteen Order Item` oi
-        JOIN `tabCanteen Order` o ON o.name = oi.parent
-        WHERE o.order_date >= %(start)s
-            AND o.docstatus = 1
-        GROUP BY oi.item, oi.item_name
+            pii.item_code AS item,
+            pii.item_name,
+            SUM(pii.qty) as total_qty,
+            SUM(pii.amount) as total_amount
+        FROM `tabPOS Invoice Item` pii
+        JOIN `tabPOS Invoice` pi ON pi.name = pii.parent
+        WHERE pi.posting_date >= %(start)s
+            AND pi.docstatus = 1
+            AND pi.is_return = 0
+        GROUP BY pii.item_code, pii.item_name
         ORDER BY total_qty DESC
         LIMIT %(limit)s
     """, {"start": start_date, "limit": limit}, as_dict=True)
     return items
+
+
+@frappe.whitelist()
+def get_invoice_print_html(invoice_name):
+    """Generate printable invoice HTML for a POS Invoice."""
+    invoice = frappe.get_doc("POS Invoice", invoice_name)
+    settings = frappe.get_single("Canteen Settings")
+    html = frappe.render_template(
+        "canteen_management/templates/invoice.html",
+        {"invoice": invoice, "settings": settings},
+    )
+    return {"html": html, "name": invoice_name}

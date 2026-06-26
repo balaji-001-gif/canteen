@@ -23,16 +23,16 @@ def format_currency(amount, currency=None):
 
 @frappe.whitelist()
 def get_dashboard_data():
-    """Fetch summary data for the Canteen dashboard"""
+    """Fetch summary data for the Canteen dashboard from POS Invoice"""
     from frappe.utils import today
 
     today_date = today()
 
     today_sales = frappe.db.sql("""
-        SELECT IFNULL(SUM(total_amount), 0) AS total,
+        SELECT IFNULL(SUM(grand_total), 0) AS total,
                COUNT(*) AS orders
-        FROM `tabCanteen Order`
-        WHERE order_date = %s AND docstatus = 1
+        FROM `tabPOS Invoice`
+        WHERE posting_date = %s AND docstatus = 1 AND is_return = 0
     """, today_date, as_dict=True)[0]
 
     low_stock = frappe.db.sql("""

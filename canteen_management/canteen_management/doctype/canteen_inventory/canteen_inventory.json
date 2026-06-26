@@ -81,8 +81,8 @@
     {
       "fieldname": "last_stock_entry",
       "fieldtype": "Link",
-      "label": "Last Stock Entry",
-      "options": "Canteen Stock Entry",
+      "label": "Last Stock Entry (ERPNext)",
+      "options": "Stock Entry",
       "read_only": 1
     },
     {

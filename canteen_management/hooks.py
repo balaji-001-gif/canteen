@@ -1,7 +1,7 @@
 app_name = "canteen_management"
 app_title = "Canteen Management"
 app_publisher = "Your Company"
-app_description = "Canteen Management System with integrated POS Billing"
+app_description = "Canteen Management System - Employee Wallet, Menu, Reports for ERPNext POS"
 app_email = "admin@yourcompany.com"
 app_license = "MIT"
 app_version = "1.0.0"
@@ -34,25 +34,8 @@ fixtures = [
     }
 ]
 
-# Document Events
+# Document Events - hooks into ERPNext standard doctypes
 doc_events = {
-    "Canteen Order": {
-        "on_submit": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.on_submit",
-        "on_cancel": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.on_cancel",
-    },
-    "Canteen Invoice": {
-        "on_submit": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.on_submit",
-        "on_cancel": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.on_cancel",
-    },
-    "Canteen Stock Entry": {
-        "on_submit": [
-            "canteen_management.canteen_management.doctype.canteen_stock_entry.canteen_stock_entry.on_submit",
-            "canteen_management.canteen_stock_entry_hooks.stock_entry_on_submit",
-        ],
-        "on_cancel": [
-            "canteen_management.canteen_stock_entry_hooks.stock_entry_on_cancel",
-        ],
-    },
     "POS Invoice": {
         "on_submit": [
             "canteen_management.pos_invoice_hooks.wallet_payment_on_submit",
@@ -77,13 +60,7 @@ scheduler_events = {
     "hourly": []
 }
 
-# Roles
-has_permission = {
-    "Canteen Order": "canteen_management.canteen_management.doctype.canteen_order.canteen_order.has_permission",
-    "Canteen Invoice": "canteen_management.canteen_management.doctype.canteen_invoice.canteen_invoice.has_permission",
-}
-
-# After install
+# After install / migrate
 after_install = "canteen_management.setup.after_install"
 after_migrate = "canteen_management.setup.after_migrate"
 
@@ -94,11 +71,3 @@ jinja = {
         "canteen_management.utils.format_currency",
     ]
 }
-
-# Override Whitelisted Methods
-override_whitelisted_methods = {}
-
-# Website Route
-website_route_rules = [
-    {"from_route": "/canteen-pos", "to_route": "canteen_pos"},
-]

@@ -95,7 +95,7 @@
       "fieldname": "reference_document",
       "fieldtype": "Select",
       "label": "Reference Document",
-      "options": "\nCanteen Order\nCanteen Invoice"
+      "options": "\nPOS Invoice"
     },
     {
       "fieldname": "reference_name",

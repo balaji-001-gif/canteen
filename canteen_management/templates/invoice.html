@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Canteen Invoice - {{ invoice.name }}</title>
+    <title>Canteen Receipt - {{ invoice.name }}</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 10px; }
         .header { text-align: center; margin-bottom: 15px; }
@@ -34,21 +34,22 @@
     <div class="divider"></div>
     <table>
         <tr>
-            <td>Invoice No:</td><td class="right"><b>{{ invoice.name }}</b></td>
+            <td>Receipt No:</td><td class="right"><b>{{ invoice.name }}</b></td>
         </tr>
         <tr>
-            <td>Date:</td><td class="right">{{ invoice.invoice_date }}</td>
+            <td>Date:</td><td class="right">{{ invoice.posting_date }}</td>
+        </tr>
+        <tr>
+            <td>Time:</td><td class="right">{{ invoice.posting_time }}</td>
         </tr>
         {% if invoice.customer_name %}
         <tr>
             <td>Customer:</td><td class="right">{{ invoice.customer_name }}</td>
         </tr>
         {% endif %}
-        {% if invoice.cashier %}
         <tr>
-            <td>Cashier:</td><td class="right">{{ invoice.cashier }}</td>
+            <td>Cashier:</td><td class="right">{{ invoice.owner }}</td>
         </tr>
-        {% endif %}
     </table>
 
     <div class="divider"></div>
@@ -65,7 +66,7 @@
             {% for item in invoice.items %}
             <tr>
                 <td>{{ item.item_name }}</td>
-                <td class="right">{{ item.quantity }}</td>
+                <td class="right">{{ item.qty }}</td>
                 <td class="right">{{ frappe.utils.fmt_money(item.rate) }}</td>
                 <td class="right">{{ frappe.utils.fmt_money(item.amount) }}</td>
             </tr>
@@ -77,12 +78,12 @@
     <table class="totals">
         <tr>
             <td>Subtotal</td>
-            <td class="right">{{ frappe.utils.fmt_money(invoice.subtotal) }}</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.net_total) }}</td>
         </tr>
-        {% if invoice.tax_amount %}
+        {% if invoice.total_taxes_and_charges %}
         <tr>
             <td>Tax</td>
-            <td class="right">{{ frappe.utils.fmt_money(invoice.tax_amount) }}</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.total_taxes_and_charges) }}</td>
         </tr>
         {% endif %}
         {% if invoice.discount_amount %}
@@ -93,12 +94,16 @@
         {% endif %}
         <tr class="grand-total">
             <td>TOTAL</td>
-            <td class="right">{{ frappe.utils.fmt_money(invoice.total_amount) }}</td>
+            <td class="right">{{ frappe.utils.fmt_money(invoice.grand_total) }}</td>
         </tr>
+        {% if invoice.payments %}
+        {% for payment in invoice.payments %}
         <tr>
-            <td>Payment ({{ invoice.payment_mode }})</td>
-            <td class="right">{{ frappe.utils.fmt_money(invoice.paid_amount) }}</td>
+            <td>Payment ({{ payment.mode_of_payment }})</td>
+            <td class="right">{{ frappe.utils.fmt_money(payment.amount) }}</td>
         </tr>
+        {% endfor %}
+        {% endif %}
         {% if invoice.change_amount %}
         <tr>
             <td>Change</td>
@@ -112,7 +117,7 @@
         {% if settings.receipt_footer %}
             <p>{{ settings.receipt_footer }}</p>
         {% else %}
-            <p>Thank you for visiting! Come again.</p>
+            <p>Thank you! Visit again.</p>
         {% endif %}
     </div>
 </body>

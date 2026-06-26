@@ -20,22 +20,16 @@
       "default": "Today"
     },
     {
-      "fieldname": "payment_mode",
-      "fieldtype": "Select",
-      "label": "Payment Mode",
-      "options": "\nCash\nCard\nUPI\nWallet\nCredit"
-    },
-    {
-      "fieldname": "cashier",
+      "fieldname": "customer",
       "fieldtype": "Link",
-      "label": "Cashier",
-      "options": "User"
+      "label": "Customer",
+      "options": "Customer"
     }
   ],
   "is_standard": "Yes",
   "module": "Canteen Management",
   "name": "Canteen Sales Report",
-  "ref_doctype": "Canteen Order",
+  "ref_doctype": "POS Invoice",
   "report_name": "Canteen Sales Report",
   "report_type": "Script Report",
   "roles": [

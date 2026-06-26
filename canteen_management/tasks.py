@@ -13,11 +13,11 @@ def send_daily_sales_summary():
     result = frappe.db.sql("""
         SELECT
             COUNT(*) AS total_orders,
-            IFNULL(SUM(total_amount), 0) AS total_sales,
-            IFNULL(SUM(tax_amount), 0) AS total_tax,
+            IFNULL(SUM(grand_total), 0) AS total_sales,
+            IFNULL(SUM(total_taxes_and_charges), 0) AS total_tax,
             IFNULL(SUM(discount_amount), 0) AS total_discount
-        FROM `tabCanteen Order`
-        WHERE order_date = %s AND docstatus = 1
+        FROM `tabPOS Invoice`
+        WHERE posting_date = %s AND docstatus = 1 AND is_return = 0
     """, yesterday, as_dict=True)[0]
 
     message = f"""

@@ -38,18 +38,13 @@
   "shortcuts": [
     {
       "type": "DocType",
-      "link_to": "Canteen Order",
-      "label": "Canteen Order"
+      "link_to": "POS Invoice",
+      "label": "POS Invoice"
     },
     {
       "type": "DocType",
       "link_to": "Canteen Table",
       "label": "Canteen Table"
-    },
-    {
-      "type": "DocType",
-      "link_to": "Canteen Invoice",
-      "label": "Canteen Invoice"
     },
     {
       "type": "DocType",
@@ -68,8 +63,8 @@
     },
     {
       "type": "DocType",
-      "link_to": "Canteen Supplier",
-      "label": "Canteen Supplier"
+      "link_to": "Stock Entry",
+      "label": "Stock Entry"
     },
     {
       "type": "Report",
@@ -112,8 +107,8 @@
     {
       "hidden": 0,
       "idx": 2,
-      "label": "Canteen Order",
-      "link_to": "Canteen Order",
+      "label": "POS Invoice",
+      "link_to": "POS Invoice",
       "link_type": "DocType",
       "onboard": 1,
       "type": "Link"
@@ -130,15 +125,6 @@
     {
       "hidden": 0,
       "idx": 4,
-      "label": "Canteen Invoice",
-      "link_to": "Canteen Invoice",
-      "link_type": "DocType",
-      "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "idx": 5,
       "label": "Canteen Employee Wallet",
       "link_to": "Canteen Employee Wallet",
       "link_type": "DocType",
@@ -147,7 +133,7 @@
     },
     {
       "hidden": 0,
-      "idx": 6,
+      "idx": 5,
       "label": "Menu & Items",
       "link_count": 0,
       "onboard": 1,
@@ -156,7 +142,7 @@
     },
     {
       "hidden": 0,
-      "idx": 7,
+      "idx": 6,
       "label": "Canteen Item",
       "link_to": "Canteen Item",
       "link_type": "DocType",
@@ -165,7 +151,7 @@
     },
     {
       "hidden": 0,
-      "idx": 8,
+      "idx": 7,
       "label": "Canteen Category",
       "link_to": "Canteen Category",
       "link_type": "DocType",
@@ -174,7 +160,7 @@
     },
     {
       "hidden": 0,
-      "idx": 9,
+      "idx": 8,
       "label": "Inventory & Procurement",
       "link_count": 0,
       "onboard": 1,
@@ -183,7 +169,7 @@
     },
     {
       "hidden": 0,
-      "idx": 10,
+      "idx": 9,
       "label": "Canteen Item",
       "link_to": "Canteen Item",
       "link_type": "DocType",
@@ -192,7 +178,7 @@
     },
     {
       "hidden": 0,
-      "idx": 11,
+      "idx": 10,
       "label": "Canteen Inventory",
       "link_to": "Canteen Inventory",
       "link_type": "DocType",
@@ -201,25 +187,16 @@
     },
     {
       "hidden": 0,
+      "idx": 11,
+      "label": "Stock Entry",
+      "link_to": "Stock Entry",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
       "idx": 12,
-      "label": "Canteen Stock Entry",
-      "link_to": "Canteen Stock Entry",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "idx": 13,
-      "label": "Canteen Supplier",
-      "link_to": "Canteen Supplier",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "idx": 14,
       "label": "Wallet & Payments",
       "link_count": 0,
       "onboard": 0,
@@ -228,7 +205,7 @@
     },
     {
       "hidden": 0,
-      "idx": 15,
+      "idx": 13,
       "label": "Canteen Employee Wallet",
       "link_to": "Canteen Employee Wallet",
       "link_type": "DocType",
@@ -237,7 +214,7 @@
     },
     {
       "hidden": 0,
-      "idx": 16,
+      "idx": 14,
       "label": "Canteen Wallet Transaction",
       "link_to": "Canteen Wallet Transaction",
       "link_type": "DocType",
@@ -246,7 +223,7 @@
     },
     {
       "hidden": 0,
-      "idx": 17,
+      "idx": 15,
       "label": "Settings",
       "link_count": 0,
       "onboard": 0,
@@ -255,7 +232,7 @@
     },
     {
       "hidden": 0,
-      "idx": 20,
+      "idx": 16,
       "label": "Canteen Settings",
       "link_to": "Canteen Settings",
       "link_type": "DocType",
@@ -264,7 +241,7 @@
     },
     {
       "hidden": 0,
-      "idx": 21,
+      "idx": 17,
       "label": "Reports & Analytics",
       "link_count": 0,
       "onboard": 0,
@@ -273,7 +250,7 @@
     },
     {
       "hidden": 0,
-      "idx": 22,
+      "idx": 18,
       "is_query_report": 1,
       "label": "Canteen Sales Report",
       "link_to": "Canteen Sales Report",
@@ -283,7 +260,7 @@
     },
     {
       "hidden": 0,
-      "idx": 23,
+      "idx": 19,
       "is_query_report": 1,
       "label": "Canteen Inventory Report",
       "link_to": "Canteen Inventory Report",
@@ -293,7 +270,7 @@
     },
     {
       "hidden": 0,
-      "idx": 24,
+      "idx": 20,
       "is_query_report": 1,
       "label": "Canteen Profit Loss",
       "link_to": "Canteen Profit Loss",
@@ -303,7 +280,7 @@
     },
     {
       "hidden": 0,
-      "idx": 25,
+      "idx": 21,
       "is_query_report": 1,
       "label": "Daily Sales Summary",
       "link_to": "Daily Sales Summary",
@@ -313,7 +290,7 @@
     },
     {
       "hidden": 0,
-      "idx": 26,
+      "idx": 22,
       "is_query_report": 1,
       "label": "Canteen Employee Consumption",
       "link_to": "Canteen Employee Consumption",

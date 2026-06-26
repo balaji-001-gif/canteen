@@ -20,26 +20,34 @@ def get_columns():
 
 
 def get_data(filters):
-    conditions = "co.docstatus = 1 AND co.employee IS NOT NULL"
+    conditions = "pi.docstatus = 1 AND pi.is_return = 0 AND pi.canteen_employee IS NOT NULL"
+    params = {}
 
     if filters.get("from_date"):
-        conditions += f" AND co.order_date >= '{filters['from_date']}'"
+        conditions += " AND pi.posting_date >= %(from_date)s"
+        params["from_date"] = filters["from_date"]
     if filters.get("to_date"):
-        conditions += f" AND co.order_date <= '{filters['to_date']}'"
+        conditions += " AND pi.posting_date <= %(to_date)s"
+        params["to_date"] = filters["to_date"]
     if filters.get("department"):
-        conditions += f" AND e.department = '{filters['department']}'"
+        conditions += " AND e.department = %(department)s"
+        params["department"] = filters["department"]
 
     return frappe.db.sql(f"""
         SELECT
-            co.employee,
-            co.employee_name,
+            pi.canteen_employee AS employee,
+            e.employee_name,
             e.department,
-            COUNT(co.name) AS total_orders,
-            SUM(co.total_amount) AS total_amount,
-            SUM(CASE WHEN co.payment_mode = 'Wallet' THEN co.total_amount ELSE 0 END) AS wallet_amount
-        FROM `tabCanteen Order` co
-        LEFT JOIN `tabEmployee` e ON e.name = co.employee
+            COUNT(pi.name) AS total_orders,
+            SUM(pi.grand_total) AS total_amount,
+            SUM(CASE 
+                WHEN pm.mode_of_payment = 'Wallet' THEN pm.amount 
+                ELSE 0 
+            END) AS wallet_amount
+        FROM `tabPOS Invoice` pi
+        LEFT JOIN `tabEmployee` e ON e.name = pi.canteen_employee
+        LEFT JOIN `tabPOS Invoice Payments` pm ON pm.parent = pi.name
         WHERE {conditions}
-        GROUP BY co.employee
+        GROUP BY pi.canteen_employee
         ORDER BY total_amount DESC
-    """, as_dict=True)
+    """, params, as_dict=True)

@@ -11,7 +11,7 @@
   "is_standard": "Yes",
   "module": "Canteen Management",
   "name": "Daily Sales Summary",
-  "ref_doctype": "Canteen Order",
+  "ref_doctype": "POS Invoice",
   "report_name": "Daily Sales Summary",
   "report_type": "Script Report",
   "roles": [{"role": "Canteen Admin"}, {"role": "Canteen Manager"}]
