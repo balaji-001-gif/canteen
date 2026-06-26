@@ -134,5 +134,16 @@
   "read_only": 1,
   "description": "Employee's current wallet balance (shown for reference)",
   "depends_on": "eval:doc.canteen_employee"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Stock Entry-canteen_stock_entry_ref",
+  "dt": "Stock Entry",
+  "fieldname": "canteen_stock_entry_ref",
+  "label": "Canteen Stock Entry Reference",
+  "fieldtype": "Data",
+  "insert_after": "remarks",
+  "read_only": 1,
+  "description": "Reference to the originating Canteen Stock Entry"
  }
 ]
