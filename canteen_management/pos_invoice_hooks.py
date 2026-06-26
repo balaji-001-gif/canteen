@@ -188,3 +188,85 @@ def _refund_wallet(wallet, amount, doc):
         indicator="blue",
         alert=True,
     )
+
+
+# =============================================================================
+# Stock Sync — Deduct Canteen Inventory when POS Invoice is submitted
+# =============================================================================
+
+def stock_on_submit(doc, method):
+    """Deduct Canteen Inventory quantities when a POS Invoice is submitted."""
+    if not doc.items:
+        return
+
+    for item_row in doc.items:
+        item_code = item_row.item_code
+        qty = flt(item_row.qty)
+        if qty <= 0:
+            continue
+
+        _update_canteen_inventory(item_code, qty, deduct=True)
+
+
+def stock_on_cancel(doc, method):
+    """Restore Canteen Inventory quantities when a POS Invoice is cancelled."""
+    if not doc.items:
+        return
+
+    for item_row in doc.items:
+        item_code = item_row.item_code
+        qty = flt(item_row.qty)
+        if qty <= 0:
+            continue
+
+        _update_canteen_inventory(item_code, qty, deduct=False)
+
+
+def _update_canteen_inventory(item_code, qty, deduct=True):
+    """Update Canteen Inventory by deducting or adding qty.
+
+    Since Canteen Item uses autoname = field:item_code, the item name
+    equals the item_code. Canteen Inventory links to Canteen Item via
+    the "item" field (also autoname = field:item).
+    """
+    inventory_name = frappe.db.get_value(
+        "Canteen Inventory",
+        {"item": item_code},
+        "name",
+    )
+
+    if not inventory_name:
+        # Canteen Inventory doesn't exist for this item — auto-create it
+        canteen_item = frappe.db.get_value(
+            "Canteen Item",
+            item_code,
+            ["item_name", "unit_of_measure", "min_stock_level"],
+            as_dict=True,
+        )
+        if not canteen_item:
+            # This item_code doesn't correspond to any Canteen Item — skip
+            return
+
+        inv_doc = frappe.new_doc("Canteen Inventory")
+        inv_doc.item = item_code
+        inv_doc.item_name = canteen_item.item_name
+        inv_doc.current_quantity = 0
+        inv_doc.minimum_quantity = canteen_item.min_stock_level or 10
+        inv_doc.unit = canteen_item.unit_of_measure or "Nos"
+        inv_doc.insert(ignore_permissions=True)
+        inventory_name = inv_doc.name
+
+    inv_doc = frappe.get_doc("Canteen Inventory", inventory_name)
+
+    if deduct:
+        new_qty = flt(inv_doc.current_quantity) - qty
+        if new_qty < 0:
+            frappe.throw(
+                f"Insufficient stock for {inv_doc.item_name} in Canteen Inventory. "
+                f"Available: {inv_doc.current_quantity}, Required: {qty}"
+            )
+        inv_doc.current_quantity = new_qty
+    else:
+        inv_doc.current_quantity = flt(inv_doc.current_quantity) + qty
+
+    inv_doc.save(ignore_permissions=True)
