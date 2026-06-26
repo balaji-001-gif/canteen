@@ -20,7 +20,9 @@
     "total_quantity",
     "total_amount",
     "section_notes",
-    "remarks"
+    "remarks",
+    "column_break_erp",
+    "erpnext_stock_entry"
   ],
   "fields": [
     {
@@ -124,6 +126,18 @@
       "fieldname": "remarks",
       "fieldtype": "Small Text",
       "label": "Remarks"
+    },
+    {
+      "fieldname": "column_break_erp",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "erpnext_stock_entry",
+      "fieldtype": "Link",
+      "label": "ERPNext Stock Entry",
+      "options": "Stock Entry",
+      "read_only": 1,
+      "description": "ERPNext Stock Entry created from this entry"
     }
   ],
   "icon": "fa fa-boxes",

@@ -65,12 +65,12 @@ def stock_entry_on_submit(doc, method):
     erpnext_doc.insert(ignore_permissions=True)
     erpnext_doc.submit()
 
-    # Store the ERPNext Stock Entry name on the Canteen Stock Entry for reference
+    # Store the ERPNext Stock Entry link on the Canteen Stock Entry for reference
     frappe.db.set_value(
         doc.doctype,
         doc.name,
-        "remarks",
-        (doc.remarks or "") + f"\n[ERPNext Stock Entry: {erpnext_doc.name}]",
+        "erpnext_stock_entry",
+        erpnext_doc.name,
     )
 
 
