@@ -22,8 +22,8 @@ class CanteenPOS {
 
     make() {
         // HTML template already provides the full layout
-        // Just wire up events and load data
-        this.setup_events();
+        // Load data first, then wire up events only after data is ready
+        // This prevents race conditions where event handlers fire before data loads
         this.load_pos_data();
     }
 
@@ -132,10 +132,15 @@ class CanteenPOS {
                     me.render_items(me.all_items);
                     me.setup_payment_modes();
                 }
+                // Bind events ONLY after data is loaded so handlers
+                // never fire before all_items is populated
+                me.setup_events();
             },
             error: function () {
                 me.show_loading(false);
                 me.show_toast("Failed to load POS data. Check console for details.", "error");
+                // Still bind events so user can retry
+                me.setup_events();
             },
         });
     }
