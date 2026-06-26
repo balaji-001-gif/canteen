@@ -110,5 +110,29 @@
   "options": "Canteen Settings",
   "insert_after": "canteen_role",
   "description": "Default canteen for this user"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "POS Invoice-canteen_employee",
+  "dt": "POS Invoice",
+  "fieldname": "canteen_employee",
+  "label": "Canteen Employee",
+  "fieldtype": "Link",
+  "options": "Employee",
+  "insert_after": "customer",
+  "description": "Employee paying via wallet — required when payment mode is 'Wallet'",
+  "depends_on": "eval:doc.payments && doc.payments.some(p => p.mode_of_payment === 'Wallet')"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "POS Invoice-canteen_wallet_balance",
+  "dt": "POS Invoice",
+  "fieldname": "canteen_wallet_balance",
+  "label": "Wallet Balance",
+  "fieldtype": "Currency",
+  "insert_after": "canteen_employee",
+  "read_only": 1,
+  "description": "Employee's current wallet balance (shown for reference)",
+  "depends_on": "eval:doc.canteen_employee"
  }
 ]

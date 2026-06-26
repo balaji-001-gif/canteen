@@ -46,6 +46,10 @@ doc_events = {
     },
     "Canteen Stock Entry": {
         "on_submit": "canteen_management.canteen_management.doctype.canteen_stock_entry.canteen_stock_entry.on_submit",
+    },
+    "POS Invoice": {
+        "on_submit": "canteen_management.pos_invoice_hooks.wallet_payment_on_submit",
+        "on_cancel": "canteen_management.pos_invoice_hooks.wallet_payment_on_cancel",
     }
 }
 

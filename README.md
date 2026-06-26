@@ -147,7 +147,45 @@ Set the Income Account and Expense Account under the **Accounting** section.
 3. Open the POS: `Point of Sale > POS`
 4. Start ringing up orders
 
-> The canteen's custom features (Employee Wallet, Kitchen Order Status, Table Management) are still available through the app's API and custom doctypes. See [API Endpoints](#api-endpoints-selected) for integration points.
+### Employee Wallet Payments in Standard POS
+
+The app integrates **Employee Wallet** as a payment mode in ERPNext's standard POS. When setting up (via the script or manually), a **Wallet** Mode of Payment is created.
+
+#### How it works
+
+1. Create **Canteen Employee Wallet** records for each employee who'll pay via wallet
+2. Top up wallets via `topup_wallet()` or the Canteen Employee Wallet form
+3. In the POS, the cashier:
+   - Adds items to the cart as usual
+   - Adds **Wallet** as a payment mode in the Payments table
+   - Sets the **Canteen Employee** field (appears under Customer on the POS Invoice form)
+   - Submits the invoice
+
+#### What happens on submit
+
+| Step | Action |
+|---|---|
+| 1 | Checks if any payment mode is "Wallet" |
+| 2 | Looks up the employee's wallet via the `canteen_employee` field |
+| 3 | Validates available balance (balance + credit limit) >= invoice total |
+| 4 | Deducts the amount from the wallet |
+| 5 | Creates a **Canteen Wallet Transaction** (Debit) for audit trail |
+
+#### What happens on cancel
+
+When a POS Invoice paid via Wallet is cancelled:
+- The wallet balance is **refunded** automatically
+- A **Canteen Wallet Transaction** (Credit) is created
+
+#### Troubleshooting
+
+| Error | Cause | Fix |
+|---|---|---|
+| "Wallet payment selected but no employee is linked" | Cashier didn't select an employee | Set the **Canteen Employee** field on the invoice |
+| "Employee X does not have an active canteen wallet" | No wallet exists for that employee | Create a wallet via **Canteen Employee Wallet** |
+| "Insufficient wallet balance" | Employee doesn't have enough funds | Top up the wallet via `topup_wallet()` |
+
+> The custom fields `canteen_employee` and `wallet_balance` on POS Invoice are installed automatically via `bench migrate` (from `fixtures/custom_field.json`). They only show when "Wallet" payment mode is selected.
 
 ---
 

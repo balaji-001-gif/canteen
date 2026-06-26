@@ -123,6 +123,11 @@ def _create_payment_modes(company):
             "type": "Bank",
             "account": None,  # user must set manually
         },
+        {
+            "mode_of_payment": "Wallet",
+            "type": "Cash",
+            "account": None,  # user must set manually
+        },
     ]
 
     created_modes = []
