@@ -322,6 +322,23 @@ def _create_pos_profile(company, warehouse, payment_modes):
         "name",
     )
 
+    # Find a cost center for the company (required for write_off_cost_center)
+    cost_center = frappe.db.get_value(
+        "Cost Center",
+        {"company": company, "is_group": 0, "disabled": 0},
+        "name",
+    )
+    if not cost_center:
+        # Fallback: try the company's default cost center
+        cost_center = frappe.db.get_value("Company", company, "cost_center")
+    if not cost_center:
+        # Fallback: find any non-group cost center
+        cost_center = frappe.db.get_value(
+            "Cost Center",
+            {"company": company, "is_group": 0},
+            "name",
+        )
+
     # Build payments table — only include modes with accounts configured
     payments = []
     modes_without_accounts = []
@@ -356,6 +373,7 @@ def _create_pos_profile(company, warehouse, payment_modes):
         "income_account": income_account,
         "expense_account": expense_account,
         "write_off_account": write_off_account,
+        "write_off_cost_center": cost_center,
         "payments": payments,
     })
     doc.insert(ignore_permissions=True)
