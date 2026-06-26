@@ -53,6 +53,7 @@ def stock_entry_on_submit(doc, method):
 
     erpnext_doc = frappe.get_doc({
         "doctype": "Stock Entry",
+        "stock_entry_type": purpose,
         "purpose": purpose,
         "company": company,
         "posting_date": doc.posting_date or nowdate(),
