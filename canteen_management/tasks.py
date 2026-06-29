@@ -1,5 +1,5 @@
 import frappe
-from frappe.utils import today, add_days, now_datetime
+from frappe.utils import flt, today, add_days, now_datetime
 
 # Amount credited to every active employee wallet each month
 MONTHLY_WALLET_TOPUP = 1000
