@@ -191,6 +191,39 @@ def _refund_wallet(wallet, amount, doc):
 
 
 # =============================================================================
+# Table Management — Auto-update Canteen Table status based on POS Invoice
+# =============================================================================
+
+def table_on_submit(doc, method):
+    """Release the table when POS Invoice is submitted (paid/completed)."""
+    table = doc.canteen_table if hasattr(doc, "canteen_table") and doc.canteen_table else None
+    if not table:
+        return
+
+    _set_table_status(table, "Available")
+
+    frappe.msgprint(
+        f"Table {table} is now Available.",
+        indicator="green",
+        alert=True,
+    )
+
+
+def table_on_cancel(doc, method):
+    """Release the table when POS Invoice is cancelled."""
+    table = doc.canteen_table if hasattr(doc, "canteen_table") and doc.canteen_table else None
+    if not table:
+        return
+
+    _set_table_status(table, "Available")
+
+
+def _set_table_status(table_name, status):
+    """Update a table's status in the database."""
+    frappe.db.set_value("Canteen Table", table_name, "status", status)
+
+
+# =============================================================================
 # Stock Sync — Deduct Canteen Inventory when POS Invoice is submitted
 # =============================================================================
 

@@ -103,6 +103,18 @@
 
  {
   "doctype": "Custom Field",
+  "name": "POS Invoice-canteen_table",
+  "dt": "POS Invoice",
+  "fieldname": "canteen_table",
+  "label": "Canteen Table",
+  "fieldtype": "Link",
+  "options": "Canteen Table",
+  "insert_after": "canteen_wallet_balance",
+  "description": "Dine-in table assigned for this order (auto-updates table status)"
+ },
+
+ {
+  "doctype": "Custom Field",
   "name": "POS Opening Entry-canteen_shift_name",
   "dt": "POS Opening Entry",
   "fieldname": "canteen_shift_name",

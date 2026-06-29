@@ -260,11 +260,12 @@ def list_wallets(filters=None):
 
 @frappe.whitelist()
 def get_tables():
-    """Get all tables."""
+    """Get all active tables."""
     tables = frappe.get_all(
         "Canteen Table",
-        fields=["name", "table_name", "table_no", "capacity", "status", "location"],
-        order_by="table_no asc",
+        filters={"is_active": 1},
+        fields=["name", "table_name", "table_number", "capacity", "status", "location"],
+        order_by="table_number asc",
     )
     return tables
 
@@ -274,9 +275,9 @@ def get_available_tables():
     """Get only available tables."""
     tables = frappe.get_all(
         "Canteen Table",
-        filters={"status": "Available"},
-        fields=["name", "table_name", "table_no", "capacity", "location"],
-        order_by="table_no asc",
+        filters={"status": "Available", "is_active": 1},
+        fields=["name", "table_name", "table_number", "capacity", "location"],
+        order_by="table_number asc",
     )
     return tables
 
