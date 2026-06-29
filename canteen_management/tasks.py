@@ -43,12 +43,12 @@ def send_daily_sales_summary():
 
 
 def monthly_wallet_topup():
-    """Credit ₹1,000 to every active employee wallet once per month.
+    """Credit the configured top-up amount to every active employee wallet each month.
 
+    The amount is read from Canteen Settings > Monthly Wallet Top-up Amount.
     Called by the Frappe scheduler on the 1st of each month.
-    The task is idempotent for the current month — it checks whether
-    a "Monthly wallet top-up" Credit transaction already exists for
-    this wallet in the current calendar month before adding a new one.
+    Idempotent: checks for an existing "Monthly wallet top-up" transaction
+    in the current month before adding a new one.
     """
     now = now_datetime()
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)

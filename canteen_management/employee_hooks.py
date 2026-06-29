@@ -18,7 +18,7 @@ Usage:
 """
 
 import frappe
-from frappe.utils import flt, now_datetime
+from frappe.utils import flt
 
 
 def _get_topup_amount():
