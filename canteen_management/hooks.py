@@ -70,6 +70,9 @@ scheduler_events = {
     "weekly": [
         "canteen_management.tasks.weekly_report",
     ],
+    "monthly": [
+        "canteen_management.tasks.monthly_wallet_topup",
+    ],
     "hourly": []
 }
 

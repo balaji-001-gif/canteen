@@ -1,5 +1,8 @@
 import frappe
-from frappe.utils import today, add_days
+from frappe.utils import today, add_days, now_datetime
+
+# Amount credited to every active employee wallet each month
+MONTHLY_WALLET_TOPUP = 1000
 
 
 def send_daily_sales_summary():
@@ -35,6 +38,71 @@ def send_daily_sales_summary():
         subject=f"Canteen Sales Summary - {yesterday}",
         message=message
     )
+
+
+def monthly_wallet_topup():
+    """Credit ₹1,000 to every active employee wallet once per month.
+
+    Called by the Frappe scheduler on the 1st of each month.
+    The task is idempotent for the current month — it checks whether
+    a "Monthly wallet top-up" Credit transaction already exists for
+    this wallet in the current calendar month before adding a new one.
+    """
+    now = now_datetime()
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    wallets = frappe.get_all(
+        "Canteen Employee Wallet",
+        filters={"is_active": 1},
+        fields=["name", "employee", "employee_name", "balance"],
+    )
+
+    if not wallets:
+        return
+
+    topup_count = 0
+
+    for wallet_data in wallets:
+        # Check if already topped up this month
+        already_done = frappe.db.exists("Canteen Wallet Transaction", {
+            "wallet": wallet_data.name,
+            "transaction_type": "Credit",
+            "remarks": "Monthly wallet top-up",
+            "date": [">=", month_start.strftime("%Y-%m-%d")],
+        })
+
+        if already_done:
+            continue
+
+        try:
+            wallet_doc = frappe.get_doc("Canteen Employee Wallet", wallet_data.name)
+            new_balance = flt(wallet_doc.balance) + MONTHLY_WALLET_TOPUP
+            wallet_doc.balance = new_balance
+            wallet_doc.total_credited = flt(wallet_doc.total_credited) + MONTHLY_WALLET_TOPUP
+            wallet_doc.last_transaction_date = now
+            wallet_doc.save(ignore_permissions=True)
+
+            txn = frappe.new_doc("Canteen Wallet Transaction")
+            txn.wallet = wallet_data.name
+            txn.employee = wallet_data.employee
+            txn.transaction_type = "Credit"
+            txn.amount = MONTHLY_WALLET_TOPUP
+            txn.balance_after = new_balance
+            txn.remarks = "Monthly wallet top-up"
+            txn.insert(ignore_permissions=True)
+
+            topup_count += 1
+        except Exception:
+            frappe.log_error(
+                f"Failed to top-up wallet {wallet_data.name} ({wallet_data.employee_name})",
+                "Monthly Wallet Top-up",
+            )
+
+    if topup_count:
+        frappe.log_error(
+            f"Monthly wallet top-up: ₹{MONTHLY_WALLET_TOPUP:,.0f} credited to {topup_count} wallet(s).",
+            "Monthly Wallet Top-up",
+        )
 
 
 def weekly_report():
