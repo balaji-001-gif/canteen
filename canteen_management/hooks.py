@@ -15,12 +15,7 @@ app_include_js = [
     "/assets/canteen_management/js/canteen.js"
 ]
 
-# Point of Sale specific JS (loaded in POS interface)
-pos_include_js = [
-    "/assets/canteen_management/js/pos_customization.js"
-]
-
-# Page-specific JS for the POS page (more explicit than pos_include_js)
+# Point of Sale specific JS — loaded on the point-of-sale page route
 page_js = {
     "point-of-sale": "public/js/pos_customization.js"
 }

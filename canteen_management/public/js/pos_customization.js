@@ -1,29 +1,29 @@
-// Canteen Management - POS Customization (v2 - Robust)
+// Canteen Management - POS Customization (v3 - Page toolbar approach)
 // Adds employee wallet selector and balance display to ERPNext v15 POS interface.
 //
-// Strategy (3 layers):
-//   1. frappe.ui.form.on() — primary trigger (works because POS uses frm.set_value)
-//   2. frm.fields_dict.customer.wrapper — reliable DOM reference for injection
-//   3. Floating widget fallback — if DOM injection fails, show a draggable button
+// Strategy:
+//   1. Add button to the POS page toolbar via page.add_action_item() — always works,
+//      survives Vue re-renders because toolbar is outside the Vue render tree
+//   2. Floating widget fallback if page toolbar isn't available
+//   3. frappe.ui.form.on for customer change auto-detection
 
 frappe.provide("canteen_management.pos");
 
 canteen_management.pos = {
     employee_dialog: null,
     pos_frm: null,
-    _injected: false,
+    _toolbar_btn: null,
 
     // ========== bootstrap ==========
 
     init: function () {
-        console.log("[Canteen] POS customization initializing...");
+        console.log("[Canteen POS] Initializing...");
         var self = this;
 
-        // Register form events (these fire in POS because frm.set_value triggers them)
+        // Register form events (fire in POS because frm.set_value triggers them)
         frappe.ui.form.on("POS Invoice", {
             refresh: function (frm) {
                 self.pos_frm = frm;
-                self.try_inject(frm);
             },
             customer: function (frm) {
                 self.pos_frm = frm;
@@ -31,182 +31,78 @@ canteen_management.pos = {
             },
         });
 
-        // Also poll for the frm in case form events don't fire early enough
-        this._poll_for_form();
+        // Add toolbar button + wait for page to be ready
+        this._add_toolbar_button();
     },
 
-    // ========== polling fallback ==========
+    // ========== page toolbar button (PRIMARY) ==========
 
-    _poll_for_form: function () {
+    _add_toolbar_button: function () {
         var self = this;
         var attempts = 0;
 
-        var check = function () {
+        var try_add = function () {
             attempts++;
-            // Try to get the frm from various sources
-            var frm = self.pos_frm || cur_frm;
 
-            if (frm && frm.doctype === "POS Invoice" && frm.doc) {
-                self.pos_frm = frm;
-                self.try_inject(frm);
+            var page = frappe.pages["point-of-sale"];
+            if (page && page.add_action_item) {
+                console.log("[Canteen POS] Adding toolbar button via page.add_action_item");
+                self._toolbar_btn = page.add_action_item(
+                    "👤 Canteen Employee — None selected —",
+                    function () {
+                        self.open_employee_dialog();
+                    },
+                    { icon: "user" }
+                );
+                // Add an ID so we can update the text later
+                $(self._toolbar_btn).attr("id", "canteen-toolbar-btn");
                 return;
             }
 
-            // Also check for the POS page being ready
-            var pos_page = frappe.pages["point-of-sale"];
-            if (pos_page && pos_page.page && typeof pos_page.page === "object") {
-                // Give it a moment then check again
-                setTimeout(function () {
-                    var frm2 = self.pos_frm || cur_frm;
-                    if (frm2 && frm2.doctype === "POS Invoice") {
-                        self.pos_frm = frm2;
-                        self.try_inject(frm2);
-                        return;
-                    }
-                }, 2000);
+            // Try page.page.add_action_item
+            if (page && page.page && page.page.add_action_item) {
+                console.log("[Canteen POS] Adding toolbar button via page.page.add_action_item");
+                self._toolbar_btn = page.page.add_action_item(
+                    "👤 Canteen Employee — None selected —",
+                    function () {
+                        self.open_employee_dialog();
+                    },
+                    { icon: "user" }
+                );
+                $(self._toolbar_btn).attr("id", "canteen-toolbar-btn");
                 return;
             }
 
-            if (attempts < 10) {
-                setTimeout(check, 1500);
+            if (attempts < 15) {
+                setTimeout(try_add, 1000); // retry every 1s for 15s
             } else {
-                console.log("[Canteen] Could not find POS form after polling. Trying floating widget.");
+                console.log("[Canteen POS] Page toolbar unavailable, using floating widget");
                 self._create_floating_widget();
             }
         };
 
-        check();
-    },
-
-    // ========== injection logic ==========
-
-    try_inject: function (frm) {
-        var self = this;
-
-        // Already injected — just re-bind
-        if ($("#canteen-pos-employee-section").length) {
-            self._rebind_handler();
-            return;
-        }
-
-        if (this._injected) return; // prevent duplicate attempts
-        this._injected = true;
-
-        console.log("[Canteen] POS form ready, injecting employee selector...");
-
-        // Try injection methods in order of reliability
-        setTimeout(function () {
-            var success = false;
-
-            // Method 1: frm.fields_dict (most reliable — directly references the form field)
-            if (frm.fields_dict && frm.fields_dict.customer && frm.fields_dict.customer.wrapper) {
-                var $customer_wrapper = $(frm.fields_dict.customer.wrapper);
-                if ($customer_wrapper.length && $customer_wrapper.is(":visible")) {
-                    console.log("[Canteen] Method 1: fields_dict.customer.wrapper");
-                    self._inject_after($customer_wrapper);
-                    success = true;
-                }
-            }
-
-            // Method 2: DOM selector for customer field
-            if (!success) {
-                var $customer = $('[data-fieldname="customer"]').first();
-                if ($customer.length && $customer.is(":visible")) {
-                    console.log("[Canteen] Method 2: data-fieldname selector");
-                    self._inject_after($customer);
-                    success = true;
-                }
-            }
-
-            // Method 3: Broad DOM search for customer-related elements
-            if (!success) {
-                var $customer_el = $(
-                    ".pos-customer, " +
-                    ".customer-section, " +
-                    ".pos-invoice-header, " +
-                    ".customer-field-area, " +
-                    ".frappe-control[data-fieldname='customer'], " +
-                    ".section-head"
-                ).first();
-                if ($customer_el.length) {
-                    console.log("[Canteen] Method 3: broad DOM selectors");
-                    self._inject_after($customer_el);
-                    success = true;
-                }
-            }
-
-            // Fallback: floating widget
-            if (!success) {
-                console.log("[Canteen] All DOM methods failed. Using floating widget.");
-                self._create_floating_widget();
-            }
-
-            // Auto-detect employee if customer already selected
-            if (frm.doc && frm.doc.customer) {
-                self.on_customer_change(frm, frm.doc.customer);
-            }
-        }, 1500); // small delay to let DOM settle
-    },
-
-    // ========== DOM injection ==========
-
-    _inject_after: function ($target) {
-        if ($("#canteen-pos-employee-section").length) return;
-
-        var html =
-            '<div id="canteen-pos-employee-section" style="padding: 8px 15px; border-bottom: 1px solid var(--border-color);">' +
-            '    <label class="control-label" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; color: var(--text-muted);">Canteen Employee</label>' +
-            '    <div class="control-input-wrapper"><div class="control-input">' +
-            '        <button class="btn btn-default btn-sm" id="canteen-select-employee-btn" style="width:100%;text-align:left;">' +
-            '            <span id="canteen-employee-name">— None selected —</span>' +
-            '            <span id="canteen-wallet-badge" class="indicator-pill no-indicator-dot" style="font-size:11px;padding:2px 8px;border-radius:10px;display:none;">₹0.00</span>' +
-            "        </button>" +
-            "    </div></div>" +
-            "</div>";
-
-        // Find the container to insert after
-        var $container = $target.closest(
-            ".frappe-control, " +
-            ".form-group, " +
-            ".pos-invoice-header .row, " +
-            ".section-body"
-        );
-        if (!$container.length) {
-            $container = $target.parent();
-        }
-        $container.after(html);
-
-        this._rebind_handler();
-        console.log("[Canteen] Employee selector injected into POS");
-    },
-
-    _rebind_handler: function () {
-        var self = this;
-        $("#canteen-select-employee-btn").off("click").on("click", function () {
-            self.open_employee_dialog();
-        });
+        try_add();
     },
 
     // ========== floating widget fallback ==========
 
     _create_floating_widget: function () {
-        if ($("#canteen-pos-floating-btn").length) return;
+        if ($("#canteen-pos-floating-widget").length) return;
 
         var self = this;
-
         var html =
-            '<div id="canteen-pos-floating-btn" style="position:fixed;bottom:80px;right:20px;z-index:1000;">' +
-            '    <button class="btn btn-primary btn-sm" style="border-radius:20px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.2);">' +
+            '<div id="canteen-pos-floating-widget" style="position:fixed;bottom:80px;right:20px;z-index:1000;">' +
+            '    <button class="btn btn-primary btn-sm" id="canteen-floating-btn" style="border-radius:20px;padding:10px 18px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">' +
             '        <span>👤 Select Employee</span>' +
+            '        <span id="canteen-floating-badge" style="display:none;margin-left:6px;background:#fff;color:#28a745;border-radius:10px;padding:1px 7px;font-weight:600;">₹0</span>' +
             "    </button>" +
-            "    <div id='canteen-floating-badge' style='display:none;position:absolute;top:-8px;right:-8px;background:#28a745;color:white;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;'>₹0</div>" +
             "</div>";
 
         $("body").append(html);
-        $("#canteen-pos-floating-btn button").on("click", function () {
+        $("#canteen-floating-btn").on("click", function () {
             self.open_employee_dialog();
         });
-        console.log("[Canteen] Floating employee button created");
+        console.log("[Canteen POS] Floating widget created");
     },
 
     // ========== employee selection dialog ==========
@@ -238,9 +134,25 @@ canteen_management.pos = {
                         if (emp) self.fetch_and_show_balance(emp);
                     },
                 },
-                { fieldtype: "HTML", fieldname: "balance_html", label: "Wallet Balance" },
-                { fieldtype: "Currency", fieldname: "balance", label: "Balance", read_only: 1, depends_on: "eval:doc.employee" },
-                { fieldtype: "Currency", fieldname: "credit_limit", label: "Credit Limit", read_only: 1, depends_on: "eval:doc.employee" },
+                {
+                    fieldtype: "HTML",
+                    fieldname: "balance_html",
+                    label: "Wallet Balance",
+                },
+                {
+                    fieldtype: "Currency",
+                    fieldname: "balance",
+                    label: "Balance",
+                    read_only: 1,
+                    depends_on: "eval:doc.employee",
+                },
+                {
+                    fieldtype: "Currency",
+                    fieldname: "credit_limit",
+                    label: "Credit Limit",
+                    read_only: 1,
+                    depends_on: "eval:doc.employee",
+                },
             ],
             primary_action_label: "Select Employee",
             primary_action: function (values) {
@@ -267,20 +179,35 @@ canteen_management.pos = {
                 if (r.message && r.message.balance != null) {
                     var bal = Number(r.message.balance).toFixed(2);
                     var credit = Number(r.message.credit_limit || 0).toFixed(2);
-                    var avail = (Number(r.message.balance) + Number(r.message.credit_limit || 0)).toFixed(2);
+                    var avail = (
+                        Number(r.message.balance) +
+                        Number(r.message.credit_limit || 0)
+                    ).toFixed(2);
 
                     self.employee_dialog.set_value("balance", bal);
                     self.employee_dialog.set_value("credit_limit", credit);
-                    self.employee_dialog.set_df_property("balance_html", "options",
+                    self.employee_dialog.set_df_property(
+                        "balance_html",
+                        "options",
                         '<div class="alert alert-success" style="margin:5px 0;padding:10px;">' +
-                        "<strong>Wallet Balance: ₹" + bal + "</strong><br>" +
-                        "<small>Available: ₹" + avail + " (including ₹" + credit + " credit)</small></div>");
+                            "<strong>Wallet Balance: ₹" +
+                            bal +
+                            "</strong><br>" +
+                            "<small>Available: ₹" +
+                            avail +
+                            " (including ₹" +
+                            credit +
+                            " credit)</small></div>"
+                    );
                     self.employee_dialog.refresh_field("balance_html");
                 } else {
                     self.employee_dialog.set_value("balance", 0);
                     self.employee_dialog.set_value("credit_limit", 0);
-                    self.employee_dialog.set_df_property("balance_html", "options",
-                        '<div class="alert alert-warning" style="margin:5px 0;padding:10px;">No active wallet found</div>');
+                    self.employee_dialog.set_df_property(
+                        "balance_html",
+                        "options",
+                        '<div class="alert alert-warning" style="margin:5px 0;padding:10px;">No active wallet found for this employee</div>'
+                    );
                     self.employee_dialog.refresh_field("balance_html");
                 }
             },
@@ -292,7 +219,10 @@ canteen_management.pos = {
     set_employee: function (employee) {
         var frm = this.pos_frm;
         if (!frm) {
-            frappe.show_alert({ message: "POS form not ready", indicator: "red" });
+            frappe.show_alert({
+                message: "POS form not ready. Cannot set employee.",
+                indicator: "red",
+            });
             return;
         }
 
@@ -309,32 +239,58 @@ canteen_management.pos = {
                 var emp_name = employee;
                 if (r.message) emp_name = r.message.employee_name || employee;
 
+                // Set on the POS Invoice document
                 frm.set_value("canteen_employee", employee);
-                $("#canteen-employee-name").text(emp_name);
-                self._update_wallet_badge(employee);
 
-                // Also update floating badge if it exists
-                frappe.show_alert({ message: "Employee set: " + emp_name, indicator: "green" });
+                // Update toolbar button text
+                self._update_button_text(emp_name, employee);
+
+                // Fetch and show wallet balance
+                self._update_wallet_display(employee, emp_name);
+
+                frappe.show_alert({
+                    message: "Employee set: " + emp_name,
+                    indicator: "green",
+                });
             },
         });
     },
 
-    _update_wallet_badge: function (employee) {
+    _update_button_text: function (emp_name, employee) {
+        var btn_html = "👤 " + emp_name + ' <span class="badge" id="canteen-balance-badge">...</span>';
+        if (this._toolbar_btn) {
+            $(this._toolbar_btn).html(btn_html);
+        } else {
+            $("#canteen-toolbar-btn").html(btn_html);
+        }
+    },
+
+    _update_wallet_display: function (employee, emp_name) {
+        var self = this;
+
         frappe.call({
             method: "canteen_management.api.get_wallet_balance",
             args: { employee: employee },
             callback: function (r) {
-                var $badge = $("#canteen-wallet-badge");
                 if (r.message && r.message.balance != null) {
                     var bal = Number(r.message.balance).toFixed(2);
-                    $badge.text("₹" + bal).show().removeClass("red orange green")
-                        .addClass(r.message.balance > 0 ? "green" : "orange");
+                    var badge_html =
+                        '<span class="badge" style="background:' +
+                        (r.message.balance > 0 ? "#28a745" : "#ffc107") +
+                        ";color:#fff;\">₹" +
+                        bal +
+                        "</span>";
+                    $("#canteen-toolbar-btn").html("👤 " + emp_name + " " + badge_html);
 
                     // Also update floating badge
                     var $fb = $("#canteen-floating-badge");
-                    if ($fb.length) $fb.text("₹" + bal).show();
+                    if ($fb.length) {
+                        $fb.text("₹" + bal).show();
+                    }
                 } else {
-                    $badge.text("No wallet").show().removeClass("red orange green").addClass("red");
+                    var badge_html =
+                        '<span class="badge" style="background:#dc3545;color:#fff;">No wallet</span>';
+                    $("#canteen-toolbar-btn").html("👤 " + emp_name + " " + badge_html);
                 }
             },
         });
@@ -361,6 +317,6 @@ canteen_management.pos = {
     },
 };
 
-// Initialize immediately
-console.log("[Canteen] POS customization loaded");
+// Initialize
+console.log("[Canteen POS] Script loaded");
 canteen_management.pos.init();
