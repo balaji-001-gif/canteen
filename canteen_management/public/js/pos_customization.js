@@ -233,7 +233,7 @@ canteen_management.pos = {
             args: {
                 doctype: "Employee",
                 filters: { name: employee },
-                fieldname: ["employee_name", "customer"],
+                fieldname: ["employee_name"],
             },
             callback: function (r) {
                 var emp_name = employee;

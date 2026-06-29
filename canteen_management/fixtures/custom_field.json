@@ -46,6 +46,17 @@
  },
  {
   "doctype": "Custom Field",
+  "name": "Employee-customer",
+  "dt": "Employee",
+  "fieldname": "customer",
+  "label": "Customer",
+  "fieldtype": "Link",
+  "options": "Customer",
+  "insert_after": "dietary_preferences",
+  "description": "Link this employee to a Customer record for auto-detection in POS"
+ },
+ {
+  "doctype": "Custom Field",
   "name": "User-canteen_role",
   "dt": "User",
   "fieldname": "canteen_role",
