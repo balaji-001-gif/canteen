@@ -21,7 +21,8 @@
 12. [Troubleshooting](#troubleshooting)
 13. [Development Guide](#development-guide)
 14. [Known Gaps](#known-gaps)
-15. [License](#license)
+15. [Changelog](#changelog)
+16. [License](#license)
 
 ---
 
@@ -426,6 +427,67 @@ bench --site your-site migrate
 | No customer-facing notifications | Only manager alerts via email |
 | Wallet payment mode name is hardcoded | `pos_invoice_hooks.py` checks for `"Wallet"` exactly — rename requires code change |
 | "Delivery" order type not supported | ERPNext POS can handle this but no canteen-specific delivery tracking |
+
+---
+
+## Changelog
+
+### v1.0 — Initial release (June 2026)
+
+#### Phase 1: Foundation (June 19–22)
+
+- **Project scaffolding** — Frappe app structure, `pyproject.toml`, `hooks.py`, `setup.py` with `after_install` seeding (roles, categories, tables)
+- **Core doctypes** — Canteen Item, Category, Settings, Payment Mode, Inventory, Employee Wallet, Wallet Transaction, Table, Order, Invoice, Stock Entry, Supplier, Shift
+- **REST API** — 20+ whitelisted endpoints for items, inventory, wallets, tables, dashboard, and reporting
+- **Reports** — Daily Sales Summary, Canteen Sales Report, Profit & Loss, Employee Consumption, Inventory Report (all initially querying custom doctypes)
+- **POS page** — Standalone `canteen_pos` page with item grid, cart, and order flow
+- **Workspace** — Canteen Management workspace with doctype/report shortcuts
+- **Invoice template** — Printable HTML receipt (`templates/invoice.html`)
+
+#### Phase 2: ERPNext Integration (June 25–26)
+
+- **Replaced custom billing** — Removed Canteen Order + Canteen Invoice; now uses **ERPNext POS Invoice** as the single source of truth
+- **Replaced custom stock** — Removed Canteen Stock Entry + Supplier; now uses **ERPNext Stock Entry** and standard **Supplier** doctype
+- **POS Invoice hooks** (`pos_invoice_hooks.py`):
+  - `on_submit` — Wallet payment deduction + Canteen Inventory deduction + low stock alert
+  - `on_cancel` — Wallet refund + Canteen Inventory restoration
+- **Item sync** (`setup_pos.py`) — Canteen Items → ERPNext Items, Item Prices, POS Profile, Warehouse, Modes of Payment
+- **Canteen Settings** — New fields: Enable Wallet, Enable Table Management, payment mode config, email alerts
+- **Roles & permissions** — Canteen Admin, Manager, Cashier, Staff, User roles with proper report permissions
+
+#### Phase 3: POS Toolbar Enhancements (June 26–27)
+
+- **Employee selector** — 👤 toolbar button in ERPNext POS that:
+  - Opens employee search dialog with wallet balance display
+  - Auto-selects employee when Customer name matches Employee name
+  - Sets `canteen_employee` field on the POS Invoice
+  - Shows wallet balance and status in the toolbar
+- **Wallet balance in POS** — Real-time balance display + insufficient balance warning
+- **Frappe v15 compatibility** — Fixed DOM injection for Vue.js-based POS, resolved CSS scope issues, hardened selectors
+- **Custom fields on POS Invoice** — `canteen_employee` (Link to Employee), `canteen_wallet_balance` (Currency, read-only)
+- **Custom fields on Employee** — Customer (Link to Customer), Enable Canteen Wallet (Check), Canteen Wallet (Link), Wallet Credit Limit (Currency)
+
+#### Phase 4: Automation & Lifecycle (June 29)
+
+- **Auto-create Customer from Employee** — `after_insert` hook on Employee creates a Customer (Individual, All Territories) and links it
+- **Auto-create Wallet** — New employees get a **Canteen Employee Wallet** with configurable starting balance, enabled automatically
+- **Monthly wallet top-up scheduler** (`tasks.py`):
+  - Credits every active employee wallet on the 1st of each month
+  - Idempotent — skips wallets already topped up in the current month
+  - Per-wallet error handling — one failure doesn't block the batch
+  - Configurable amount via **Canteen Settings → Monthly Wallet Top-up Amount** (default: ₹1,000)
+  - Setting to `0` disables the top-up entirely
+
+#### Phase 5: Table Management ↔ POS (June 29)
+
+- **Custom field on POS Invoice** — `canteen_table` (Link to Canteen Table)
+- **🍽️ Table toolbar button** in POS:
+  - Opens a dialog with a color-coded table grid (green = Available, red = Occupied, orange = Reserved, grey = Cleaning)
+  - Click an available table → assigns it to the invoice + marks it **Occupied** via API
+  - On invoice submit → table status set to **Available** (server-side hook)
+  - On invoice cancel → table status set to **Available** (server-side hook)
+  - On new invoice → button resets to "🍽️ Table — None"
+- **API fixes** — `get_tables()` now filters by `is_active=1` and uses correct `table_number` field
 
 ---
 
