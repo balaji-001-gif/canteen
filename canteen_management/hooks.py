@@ -20,6 +20,11 @@ pos_include_js = [
     "/assets/canteen_management/js/pos_customization.js"
 ]
 
+# Page-specific JS for the POS page (more explicit than pos_include_js)
+page_js = {
+    "point-of-sale": "public/js/pos_customization.js"
+}
+
 # Website include
 web_include_css = []
 web_include_js = []
