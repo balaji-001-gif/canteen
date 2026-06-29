@@ -20,8 +20,10 @@ Usage:
 import frappe
 from frappe.utils import flt, now_datetime
 
-# Default monthly top-up amount credited to every active employee wallet
-DEFAULT_WALLET_TOPUP = 1000
+
+def _get_topup_amount():
+    """Read the monthly wallet top-up amount from Canteen Settings."""
+    return flt(frappe.db.get_single_value("Canteen Settings", "monthly_wallet_topup")) or 0
 
 
 def sync_wallet_on_save(doc, method):
@@ -138,24 +140,25 @@ def auto_create_customer(doc, method):
         wallet.employee = doc.name
         wallet.employee_name = customer_name
         wallet.department = doc.department
-        wallet.balance = DEFAULT_WALLET_TOPUP
+        topup = _get_topup_amount()
+        wallet.balance = topup
         wallet.credit_limit = 0
         wallet.is_active = 1
         wallet.insert(ignore_permissions=True)
 
         # Create Credit transaction for audit trail
-        if DEFAULT_WALLET_TOPUP > 0:
+        if topup > 0:
             txn = frappe.new_doc("Canteen Wallet Transaction")
             txn.wallet = wallet.name
             txn.employee = doc.name
             txn.transaction_type = "Credit"
-            txn.amount = DEFAULT_WALLET_TOPUP
-            txn.balance_after = DEFAULT_WALLET_TOPUP
+            txn.amount = topup
+            txn.balance_after = topup
             txn.remarks = "Initial wallet credit — monthly allowance"
             txn.insert(ignore_permissions=True)
 
             frappe.db.set_value("Canteen Employee Wallet", wallet.name,
-                "total_credited", DEFAULT_WALLET_TOPUP)
+                "total_credited", topup)
 
         # Update Employee fields in DB
         frappe.db.set_value("Employee", doc.name, {
@@ -170,7 +173,7 @@ def auto_create_customer(doc, method):
         doc.canteen_wallet = wallet.name
 
         frappe.msgprint(
-            f"Auto-created wallet for '{customer_name}' with ₹{DEFAULT_WALLET_TOPUP:,.0f}.",
+            f"Auto-created wallet for '{customer_name}' with ₹{topup:,.0f}.",
             alert=True,
         )
 

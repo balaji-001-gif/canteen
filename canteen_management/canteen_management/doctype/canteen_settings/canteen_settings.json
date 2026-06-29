@@ -14,6 +14,7 @@
     "gst_number",
     "tax_rate",
     "enable_wallet",
+    "monthly_wallet_topup",
     "section_pos",
     "default_printer",
     "receipt_header",
@@ -78,6 +79,13 @@
       "fieldtype": "Check",
       "label": "Enable Employee Wallet",
       "default": "1"
+    },
+    {
+      "fieldname": "monthly_wallet_topup",
+      "fieldtype": "Currency",
+      "label": "Monthly Wallet Top-up Amount",
+      "default": "1000",
+      "description": "Amount credited to each active employee wallet on the 1st of every month"
     },
     {
       "fieldname": "section_pos",
