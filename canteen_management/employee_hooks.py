@@ -84,6 +84,47 @@ def sync_wallet_on_save(doc, method):
         frappe.db.set_value("Employee", doc.name, "canteen_wallet", wallet.name)
 
 
+def auto_create_customer(doc, method):
+    """Auto-create a Customer record when a new Employee is created.
+
+    Runs on after_insert so it only fires once per Employee. If the
+    Employee already has a customer linked, skips creation.
+
+    The created Customer uses the Employee's employee_name, with
+    standard defaults (Individual, All Territories). After creation,
+    the Employee's custom "customer" field is linked to it.
+    """
+    if doc.customer:
+        return  # Already linked to a Customer — skip
+
+    # Check if a Customer already exists with this name
+    customer_name = doc.employee_name or doc.name
+    existing = frappe.db.get_value("Customer", {"customer_name": customer_name}, "name")
+    if existing:
+        frappe.db.set_value("Employee", doc.name, "customer", existing)
+        frappe.msgprint(
+            f"Linked Employee '{customer_name}' to existing Customer '{existing}'.",
+            alert=True,
+        )
+        return
+
+    # Create new Customer
+    customer = frappe.new_doc("Customer")
+    customer.customer_name = customer_name
+    customer.customer_type = "Individual"
+    customer.customer_group = "Individual"
+    customer.territory = "All Territories"
+    customer.insert(ignore_permissions=True)
+
+    # Link Employee to Customer
+    frappe.db.set_value("Employee", doc.name, "customer", customer.name)
+
+    frappe.msgprint(
+        f"Auto-created Customer '{customer.name}' for Employee '{customer_name}'.",
+        alert=True,
+    )
+
+
 def _deactivate_wallet(doc):
     """Deactivate the wallet when enable_canteen_wallet is unchecked."""
     wallet_name = frappe.db.get_value(
