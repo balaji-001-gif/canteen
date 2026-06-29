@@ -85,44 +85,77 @@ def sync_wallet_on_save(doc, method):
 
 
 def auto_create_customer(doc, method):
-    """Auto-create a Customer record when a new Employee is created.
+    """Auto-create a Customer and Canteen Wallet when a new Employee is created.
 
-    Runs on after_insert so it only fires once per Employee. If the
-    Employee already has a customer linked, skips creation.
+    Runs on after_insert so it only fires once per Employee.
 
-    The created Customer uses the Employee's employee_name, with
-    standard defaults (Individual, All Territories). After creation,
-    the Employee's custom "customer" field is linked to it.
+    - Creates a Customer (Individual, All Territories) from employee_name
+    - Creates a Canteen Employee Wallet with zero balance
+    - Enables the wallet (set enable_canteen_wallet = 1)
+    - Updates doc in-memory so the subsequent on_update handler
+      (sync_wallet_on_save) sees the enabled state and doesn't
+      accidentally deactivate the wallet.
     """
-    if doc.customer:
-        return  # Already linked to a Customer — skip
-
-    # Check if a Customer already exists with this name
     customer_name = doc.employee_name or doc.name
-    existing = frappe.db.get_value("Customer", {"customer_name": customer_name}, "name")
-    if existing:
-        frappe.db.set_value("Employee", doc.name, "customer", existing)
+
+    # ── Customer ──────────────────────────────────────────────────────────
+    if not doc.customer:
+        existing = frappe.db.get_value("Customer", {"customer_name": customer_name}, "name")
+        if existing:
+            doc.customer = existing
+            frappe.db.set_value("Employee", doc.name, "customer", existing)
+            frappe.msgprint(
+                f"Linked Employee '{customer_name}' to existing Customer '{existing}'.",
+                alert=True,
+            )
+        else:
+            customer = frappe.new_doc("Customer")
+            customer.customer_name = customer_name
+            customer.customer_type = "Individual"
+            customer.customer_group = "Individual"
+            customer.territory = "All Territories"
+            customer.insert(ignore_permissions=True)
+            doc.customer = customer.name
+            frappe.db.set_value("Employee", doc.name, "customer", customer.name)
+            frappe.msgprint(
+                f"Auto-created Customer '{customer.name}' for Employee '{customer_name}'.",
+                alert=True,
+            )
+
+    # ── Wallet ────────────────────────────────────────────────────────────
+    existing_wallet = frappe.db.get_value(
+        "Canteen Employee Wallet",
+        {"employee": doc.name},
+        ["name", "balance"],
+        as_dict=True,
+    )
+
+    if not existing_wallet:
+        wallet = frappe.new_doc("Canteen Employee Wallet")
+        wallet.employee = doc.name
+        wallet.employee_name = customer_name
+        wallet.department = doc.department
+        wallet.balance = 0
+        wallet.credit_limit = 0
+        wallet.is_active = 1
+        wallet.insert(ignore_permissions=True)
+
+        # Update Employee fields in DB
+        frappe.db.set_value("Employee", doc.name, {
+            "enable_canteen_wallet": 1,
+            "canteen_wallet": wallet.name,
+        })
+
+        # Also update in-memory doc so the subsequent on_update
+        # (sync_wallet_on_save) sees enable_canteen_wallet = 1
+        # and doesn't deactivate the wallet
+        doc.enable_canteen_wallet = 1
+        doc.canteen_wallet = wallet.name
+
         frappe.msgprint(
-            f"Linked Employee '{customer_name}' to existing Customer '{existing}'.",
+            f"Auto-created wallet '{wallet.name}' for Employee '{customer_name}'.",
             alert=True,
         )
-        return
-
-    # Create new Customer
-    customer = frappe.new_doc("Customer")
-    customer.customer_name = customer_name
-    customer.customer_type = "Individual"
-    customer.customer_group = "Individual"
-    customer.territory = "All Territories"
-    customer.insert(ignore_permissions=True)
-
-    # Link Employee to Customer
-    frappe.db.set_value("Employee", doc.name, "customer", customer.name)
-
-    frappe.msgprint(
-        f"Auto-created Customer '{customer.name}' for Employee '{customer_name}'.",
-        alert=True,
-    )
 
 
 def _deactivate_wallet(doc):
