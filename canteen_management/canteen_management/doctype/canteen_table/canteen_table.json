@@ -1,6 +1,14 @@
 {
   "actions": [],
   "autoname": "field:table_number",
+  "dashboard": {
+    "field": "canteen_table",
+    "transactions": [
+      {
+        "items": ["POS Invoice"]
+      }
+    ]
+  },
   "creation": "2024-01-01 00:00:00.000000",
   "doctype": "DocType",
   "engine": "InnoDB",

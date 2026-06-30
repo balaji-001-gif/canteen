@@ -1,6 +1,14 @@
 {
   "actions": [],
   "autoname": "field:employee",
+  "dashboard": {
+    "field": "wallet",
+    "transactions": [
+      {
+        "items": ["Canteen Wallet Transaction"]
+      }
+    ]
+  },
   "creation": "2024-01-01 00:00:00.000000",
   "doctype": "DocType",
   "engine": "InnoDB",
